@@ -66,6 +66,9 @@ public final class EssentialsCommands {
         dispatcher.register(Commands.literal("curiossee")
                 .requires(s -> EssentialsConfig.INVENTORY_INSPECTION.get() && EssentialsPermissions.has(s, EssentialsPermissions.CURIOSSEE))
                 .then(Commands.argument("player", EntityArgument.player()).executes(c -> inspectCurios(c.getSource(), EntityArgument.getPlayer(c, "player")))));
+        dispatcher.register(Commands.literal("accessoriessee")
+                .requires(s -> EssentialsConfig.INVENTORY_INSPECTION.get() && EssentialsPermissions.has(s, EssentialsPermissions.CURIOSSEE))
+                .then(Commands.argument("player", EntityArgument.player()).executes(c -> inspectAccessories(c.getSource(), EntityArgument.getPlayer(c, "player")))));
         dispatcher.register(Commands.literal("mute")
                 .requires(s -> EssentialsConfig.MODERATION.get() && EssentialsPermissions.has(s, EssentialsPermissions.MUTE))
                 .then(Commands.argument("player", EntityArgument.player()).executes(c -> setMuted(c.getSource(), EntityArgument.getPlayer(c, "player"), true))));
@@ -115,6 +118,10 @@ public final class EssentialsCommands {
                 .then(Commands.argument("player", EntityArgument.player()).executes(c -> tpa(c.getSource(), EntityArgument.getPlayer(c, "player")))));
         dispatcher.register(Commands.literal("tpaccept").requires(s -> EssentialsConfig.TPA.get() && EssentialsPermissions.has(s, EssentialsPermissions.TPA)).executes(c -> tpAccept(c.getSource())));
         dispatcher.register(Commands.literal("tpdeny").requires(s -> EssentialsConfig.TPA.get() && EssentialsPermissions.has(s, EssentialsPermissions.TPA)).executes(c -> tpDeny(c.getSource())));
+        dispatcher.register(Commands.literal("invseeoffline").requires(s -> EssentialsConfig.INVENTORY_INSPECTION.get() && EssentialsPermissions.has(s, EssentialsPermissions.INVSEE))
+                .then(Commands.argument("player", StringArgumentType.word()).executes(c -> offlineInspect(c.getSource(), StringArgumentType.getString(c, "player"), false))));
+        dispatcher.register(Commands.literal("enderseeoffline").requires(s -> EssentialsConfig.INVENTORY_INSPECTION.get() && EssentialsPermissions.has(s, EssentialsPermissions.ENDERSEE))
+                .then(Commands.argument("player", StringArgumentType.word()).executes(c -> offlineInspect(c.getSource(), StringArgumentType.getString(c, "player"), true))));
     }
 
     private static void registerTemporaryPunishment(CommandDispatcher<CommandSourceStack> dispatcher, String command, PunishmentStore.Kind kind) {
@@ -245,6 +252,12 @@ public final class EssentialsCommands {
         AuditLog.record(source.getServer(), viewer.getGameProfile().getName(), "CURIOSSEE", target.getGameProfile().getName(), "opened");
         return 1;
     }
+    private static int inspectAccessories(CommandSourceStack source, ServerPlayer target) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        if (!ModList.get().isLoaded("accessories")) { source.sendFailure(Component.literal("Accessories is not installed.")); return 0; }
+        ServerPlayer viewer = source.getPlayerOrException();
+        if (!AccessoriesInspection.open(viewer, target)) { source.sendFailure(Component.literal("No Accessories capability is available for that player.")); return 0; }
+        AuditLog.record(source.getServer(), viewer.getGameProfile().getName(), "ACCESSORIESSEE", target.getGameProfile().getName(), "opened"); return 1;
+    }
 
     private static int setMuted(CommandSourceStack source, ServerPlayer target, boolean enabled) {
         if (!canModerate(source, target)) return 0;
@@ -272,6 +285,7 @@ public final class EssentialsCommands {
     private static int staffMode(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         boolean enabled = PlayerState.toggleStaffMode(player);
+        if (enabled) StaffTools.activate(player); else StaffTools.deactivate(player);
         AuditLog.record(source.getServer(), player.getGameProfile().getName(), "STAFF_MODE", player.getGameProfile().getName(), enabled ? "enabled" : "disabled");
         source.sendSuccess(() -> Component.literal("Staff mode " + (enabled ? "enabled. Flight, god mode, and staff chat are active." : "disabled. Previous flight and god settings restored.")), false);
         return 1;
@@ -372,6 +386,11 @@ public final class EssentialsCommands {
         PlayerState.remember(requester); requester.teleportTo(target.serverLevel(), target.getX(), target.getY(), target.getZ(), target.getYRot(), target.getXRot()); requester.sendSystemMessage(Component.literal("Teleport request accepted.")); source.sendSuccess(() -> Component.literal("Teleport request accepted."), false); return 1;
     }
     private static int tpDeny(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException { if (!TravelStore.deny(source.getPlayerOrException())) { source.sendFailure(Component.literal("No active teleport request.")); return 0; } source.sendSuccess(() -> Component.literal("Teleport request denied."), false); return 1; }
+    private static int offlineInspect(CommandSourceStack source, String playerName, boolean enderChest) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer viewer = source.getPlayerOrException(); String error = OfflineInspection.open(viewer, playerName, enderChest);
+        if (error != null) { source.sendFailure(Component.literal(error)); return 0; }
+        AuditLog.record(source.getServer(), viewer.getGameProfile().getName(), enderChest ? "OFFLINE_ENDERSEE" : "OFFLINE_INVSEE", playerName, "read-only"); return 1;
+    }
 
     private static boolean canModerate(CommandSourceStack source, ServerPlayer target) {
         if (!(source.getEntity() instanceof ServerPlayer actor)) return true;

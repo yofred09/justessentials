@@ -17,7 +17,10 @@ Just Essentials is a modular, server-side administration and utility mod for Min
 - `/back`
 - `/invsee <player>` - live inventory, armor, and offhand inspection
 - `/endersee <player>` - live Ender Chest inspection
+- `/invseeoffline <player>` - read-only saved inventory inspection
+- `/enderseeoffline <player>` - read-only saved Ender Chest inspection
 - `/curiossee <player>` - live Curios slots (also supports Accessories through its Curios compatibility layer)
+- `/accessoriessee <player>` - direct Accessories API inspection without the compatibility layer
 - `/mute <player>` and `/unmute <player>`
 - `/freeze <player>` and `/unfreeze <player>`
 - `/staffmode` - toggles flight, god mode, and staff-chat mode while preserving previous states
@@ -75,7 +78,18 @@ Every category-specific URL is optional and falls back to `webhookUrl`. Join and
 
 - Offline inventory inspection
 - Native Accessories API adapter without its compatibility layer
-- Offline inventory inspection, direct Accessories API support, staff hotbar tools, and translatable/custom messages
+- Full message localization/customization and multiplayer regression testing
+
+## Staff tools
+
+Staff mode safely stores the staff member's complete inventory in persistent player data and supplies a temporary tool hotbar:
+
+- Compass: teleport to a random online player
+- Chest: right-click a player to inspect their inventory
+- Blaze rod: right-click a player to freeze or unfreeze them
+- Barrier: exit staff mode and restore the original inventory
+
+If the server restarts while staff mode is active, the saved inventory remains available and is restored when staff mode is disabled.
 
 ## Requirements
 

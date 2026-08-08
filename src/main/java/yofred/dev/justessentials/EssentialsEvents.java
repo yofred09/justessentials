@@ -39,6 +39,7 @@ public final class EssentialsEvents {
             PlayerState.enforceFreeze(player);
             SESSIONS.put(player.getUUID(), Instant.now());
             DiscordWebhook.playerJoined(player);
+            if (PlayerState.isStaffMode(player)) StaffTools.activate(player);
         }
     }
     @SubscribeEvent
@@ -77,6 +78,14 @@ public final class EssentialsEvents {
     public static void entityInteract(PlayerInteractEvent.EntityInteract event) { cancelIfFrozen(event.getEntity(), event); }
     @SubscribeEvent
     public static void entityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) { cancelIfFrozen(event.getEntity(), event); }
+    @SubscribeEvent
+    public static void staffToolItem(PlayerInteractEvent.RightClickItem event) {
+        if (event.getEntity() instanceof ServerPlayer staff && StaffTools.handleItem(staff, event.getItemStack())) event.setCanceled(true);
+    }
+    @SubscribeEvent
+    public static void staffToolPlayer(PlayerInteractEvent.EntityInteract event) {
+        if (event.getEntity() instanceof ServerPlayer staff && event.getTarget() instanceof ServerPlayer target && StaffTools.handlePlayer(staff, target, event.getItemStack())) event.setCanceled(true);
+    }
     @SubscribeEvent
     public static void attack(AttackEntityEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && PlayerState.isFrozen(player)) event.setCanceled(true);

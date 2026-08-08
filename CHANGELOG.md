@@ -30,3 +30,6 @@
 - Staff hierarchy and self-punishment protection
 - Persistent named homes and server warps across dimensions
 - TPA requests with configurable timeout, accept, and deny commands
+- Strictly read-only offline inventory and Ender Chest inspection
+- Direct optional Accessories API inspection alongside Curios support
+- Persistent staff-mode inventory backup and interactive staff tool hotbar
