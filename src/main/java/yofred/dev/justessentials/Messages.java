@@ -9,7 +9,7 @@ final class Messages {
     static Component message(String template) { return colored(EssentialsConfig.MESSAGE_PREFIX.get() + template); }
     static Component message(String template, Map<String, String> values) { return message(replace(template, values)); }
     static Component plain(String template, Map<String, String> values) { return colored(replace(template, values)); }
-    static String replace(String template, Map<String, String> values) { String result = template; for (var entry : values.entrySet()) result = result.replace("{" + entry.getKey() + "}", entry.getValue()); return result; }
+    static String replace(String template, Map<String, String> values) { return TemplateFormatter.replace(template, values); }
     static Component colored(String input) {
         MutableComponent root = Component.empty();
         StringBuilder text = new StringBuilder();

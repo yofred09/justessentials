@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.world.level.storage.LevelResource;
 
 public final class PunishmentStore {
@@ -25,32 +26,20 @@ public final class PunishmentStore {
     public record Entry(UUID playerId, String playerName, Kind kind, String actor, String reason, long createdAt, long expiresAt, boolean active) {}
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Type LIST_TYPE = new TypeToken<List<Entry>>() {}.getType();
-    private static final Pattern DURATION = Pattern.compile("(?i)^(\\d+)(s|m|h|d|w)$");
     private static long lastExpiryCheck;
 
     public static Duration parseDuration(String input) {
-        Matcher matcher = DURATION.matcher(input);
-        if (!matcher.matches()) return null;
-        long value;
-        try { value = Long.parseLong(matcher.group(1)); } catch (NumberFormatException exception) { return null; }
-        if (value < 1) return null;
-        try {
-            return switch (matcher.group(2).toLowerCase(Locale.ROOT)) {
-                case "s" -> Duration.ofSeconds(value);
-                case "m" -> Duration.ofMinutes(value);
-                case "h" -> Duration.ofHours(value);
-                case "d" -> Duration.ofDays(value);
-                case "w" -> Duration.ofDays(Math.multiplyExact(value, 7));
-                default -> null;
-            };
-        } catch (ArithmeticException exception) { return null; }
+        return DurationParser.parse(input);
     }
 
     public static synchronized Entry add(MinecraftServer server, ServerPlayer target, Kind kind, String actor, String reason, Duration duration) {
+        return add(server, target.getGameProfile(), kind, actor, reason, duration);
+    }
+    public static synchronized Entry add(MinecraftServer server, GameProfile target, Kind kind, String actor, String reason, Duration duration) {
         List<Entry> entries = load(server);
-        entries = deactivate(entries, target.getUUID(), kind);
+        entries = deactivate(entries, target.getId(), kind);
         long now = Instant.now().toEpochMilli();
-        Entry entry = new Entry(target.getUUID(), target.getGameProfile().getName(), kind, actor, reason, now, now + duration.toMillis(), true);
+        Entry entry = new Entry(target.getId(), target.getName(), kind, actor, reason, now, now + duration.toMillis(), true);
         entries.add(entry);
         save(server, entries);
         return entry;
@@ -94,7 +83,7 @@ public final class PunishmentStore {
                 if (entry.kind() == Kind.FREEZE && player != null) PlayerState.setFrozen(player, false);
                 if (entry.kind() == Kind.BAN) server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "pardon " + entry.playerName());
                 AuditLog.record(server, "SYSTEM", "TEMP_" + entry.kind() + "_EXPIRED", entry.playerName(), entry.reason());
-                if (player != null) player.sendSystemMessage(net.minecraft.network.chat.Component.literal("Your temporary " + entry.kind().name().toLowerCase(Locale.ROOT) + " has expired."));
+                if (player != null) player.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_PUNISHMENT_EXPIRED.get(), java.util.Map.of("type", entry.kind().name().toLowerCase(Locale.ROOT))));
             } else updated.add(entry);
         }
         if (changed) save(server, updated);
@@ -111,10 +100,10 @@ public final class PunishmentStore {
         try {
             List<Entry> result = GSON.fromJson(Files.readString(path, StandardCharsets.UTF_8), LIST_TYPE);
             return result == null ? new ArrayList<>() : new ArrayList<>(result);
-        } catch (Exception exception) { JustEssentials.LOGGER.error("Unable to read punishment database", exception); return new ArrayList<>(); }
+        } catch (Exception exception) { SafeFiles.preserveCorrupt(path); JustEssentials.LOGGER.error("Unable to read punishment database; a corrupt backup was preserved", exception); return new ArrayList<>(); }
     }
     private static void save(MinecraftServer server, List<Entry> entries) {
-        try { Files.writeString(path(server), GSON.toJson(entries), StandardCharsets.UTF_8); }
+        try { SafeFiles.writeAtomically(path(server), GSON.toJson(entries)); }
         catch (IOException exception) { JustEssentials.LOGGER.error("Unable to save punishment database", exception); }
     }
     private PunishmentStore() {}

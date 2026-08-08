@@ -97,6 +97,12 @@ public final class PlayerState {
         persisted.put(ROOT, ours);
         persistent.put(Player.PERSISTED_NBT_TAG, persisted);
     }
+    static boolean integrationFlag(ServerPlayer player, String key) { return data(player).getBoolean(key); }
+    static void setIntegrationFlag(ServerPlayer player, String key, boolean value) { setFlag(player, key, value); }
+    static void removeIntegrationFlag(ServerPlayer player, String key) {
+        CompoundTag persistent = player.getPersistentData(); CompoundTag persisted = persistent.getCompound(Player.PERSISTED_NBT_TAG); CompoundTag ours = persisted.getCompound(ROOT);
+        ours.remove(key); persisted.put(ROOT, ours); persistent.put(Player.PERSISTED_NBT_TAG, persisted);
+    }
     private record Location(ResourceKey<Level> dimension, double x, double y, double z, float yaw, float pitch) {}
     private PlayerState() {}
 }

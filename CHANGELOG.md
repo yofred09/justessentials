@@ -37,3 +37,10 @@
 - Ampersand color/style codes and template placeholders
 - `/jereload` configuration confirmation command
 - Hardened offline snapshot menus that reject slot clicks and quick transfers server-side
+- Optional Just Vanish 1.2 API integration controlled entirely by Just Essentials
+- Staff mode remembers, enables, and restores the previous vanish state
+- Internal staff-tool identifiers prevent ordinary items from triggering admin actions
+- Offline-capable temporary bans
+- Atomic JSON writes with corrupt-file preservation
+- JUnit coverage for durations, placeholders, and atomic persistence
+- Optional dependency metadata for Just Vanish, Curios, and Accessories

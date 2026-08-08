@@ -91,6 +91,8 @@ Staff mode safely stores the staff member's complete inventory in persistent pla
 
 If the server restarts while staff mode is active, the saved inventory remains available and is restored when staff mode is disabled.
 
+When Just Vanish 1.2.0+ is installed, staff mode uses its public API automatically: it remembers the staff member's previous vanish state, enables vanish on entry, and restores the previous state on exit. This integration is implemented entirely in Just Essentials and is configurable with `integrations.justVanish.staffModeVanish`.
+
 ## Message and menu customization
 
 The server config contains `[messages]`, `[menus]`, and `[staffTools]` sections. Text supports classic `&` color/style codes and placeholders such as `{player}`, `{reason}`, `{type}`, and `{expires}`. You can customize the global prefix, moderation notices, TPA messages, staff-mode messages, menu titles, tool names, or disable the staff hotbar entirely. NeoForge watches the config file; `/jereload` confirms that the current values are active.

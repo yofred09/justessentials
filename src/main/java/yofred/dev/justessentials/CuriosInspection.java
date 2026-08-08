@@ -26,7 +26,7 @@ final class CuriosInspection {
         Container container = new CuriosView(handlers, rows * 9);
         viewer.openMenu(new SimpleMenuProvider(
                 (id, inventory, player) -> new ChestMenu(menuType(rows), id, inventory, container, rows),
-                Component.literal(target.getGameProfile().getName() + " - Curios")));
+                Messages.plain(EssentialsConfig.MENU_CURIOS.get(), java.util.Map.of("player", target.getGameProfile().getName()))));
         return true;
     }
 

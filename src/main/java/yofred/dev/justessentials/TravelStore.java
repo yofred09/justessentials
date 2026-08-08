@@ -60,7 +60,7 @@ final class TravelStore {
     static boolean deny(ServerPlayer target) { return REQUESTS.remove(target.getUUID()) != null; }
     private static Location here(ServerPlayer player) { return new Location(player.level().dimension().location().toString(), player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot()); }
     private static Path path(MinecraftServer server) { return server.getWorldPath(LevelResource.ROOT).resolve("justessentials-travel.json"); }
-    private static Data load(MinecraftServer server) { try { Path path = path(server); if (!Files.exists(path)) return new Data(); Data data = GSON.fromJson(Files.readString(path, StandardCharsets.UTF_8), Data.class); return data == null ? new Data() : data; } catch (Exception exception) { JustEssentials.LOGGER.error("Unable to read travel database", exception); return new Data(); } }
-    private static void save(MinecraftServer server, Data data) { try { Files.writeString(path(server), GSON.toJson(data), StandardCharsets.UTF_8); } catch (Exception exception) { JustEssentials.LOGGER.error("Unable to save travel database", exception); } }
+    private static Data load(MinecraftServer server) { Path path = path(server); try { if (!Files.exists(path)) return new Data(); Data data = GSON.fromJson(Files.readString(path, StandardCharsets.UTF_8), Data.class); return data == null ? new Data() : data; } catch (Exception exception) { SafeFiles.preserveCorrupt(path); JustEssentials.LOGGER.error("Unable to read travel database; a corrupt backup was preserved", exception); return new Data(); } }
+    private static void save(MinecraftServer server, Data data) { try { SafeFiles.writeAtomically(path(server), GSON.toJson(data)); } catch (Exception exception) { JustEssentials.LOGGER.error("Unable to save travel database", exception); } }
     private TravelStore() {}
 }

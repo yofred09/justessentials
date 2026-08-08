@@ -20,7 +20,7 @@ final class AccessoriesInspection {
         int count = containers.stream().mapToInt(AccessoriesContainer::getSize).sum();
         int rows = Math.max(1, Math.min(6, (count + 8) / 9));
         Container view = new View(containers, rows * 9);
-        viewer.openMenu(new SimpleMenuProvider((id, inventory, player) -> new ChestMenu(type(rows), id, inventory, view, rows), Component.literal(target.getGameProfile().getName() + " - Accessories")));
+        viewer.openMenu(new SimpleMenuProvider((id, inventory, player) -> new ChestMenu(type(rows), id, inventory, view, rows), Messages.plain(EssentialsConfig.MENU_ACCESSORIES.get(), java.util.Map.of("player", target.getGameProfile().getName()))));
         return true;
     }
     private static net.minecraft.world.inventory.MenuType<ChestMenu> type(int rows) { return switch (rows) { case 1 -> net.minecraft.world.inventory.MenuType.GENERIC_9x1; case 2 -> net.minecraft.world.inventory.MenuType.GENERIC_9x2; case 3 -> net.minecraft.world.inventory.MenuType.GENERIC_9x3; case 4 -> net.minecraft.world.inventory.MenuType.GENERIC_9x4; case 5 -> net.minecraft.world.inventory.MenuType.GENERIC_9x5; default -> net.minecraft.world.inventory.MenuType.GENERIC_9x6; }; }
