@@ -7,6 +7,13 @@ import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.neoforged.neoforge.event.ServerChatEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = JustEssentials.MODID)
 public final class EssentialsEvents {
@@ -20,7 +27,46 @@ public final class EssentialsEvents {
     }
     @SubscribeEvent
     public static void login(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) PlayerState.applyFlight(player);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PlayerState.applyFlight(player);
+            PlayerState.enforceFreeze(player);
+        }
+    }
+    @SubscribeEvent
+    public static void chat(ServerChatEvent event) {
+        ServerPlayer player = event.getPlayer();
+        if (PlayerState.isMuted(player)) {
+            event.setCanceled(true);
+            player.sendSystemMessage(Component.literal("You are muted.").withStyle(ChatFormatting.RED));
+        } else if (PlayerState.isStaffChat(player) && EssentialsPermissions.has(player, EssentialsPermissions.STAFF_CHAT)) {
+            event.setCanceled(true);
+            EssentialsCommands.staffChat(player.createCommandSourceStack(), event.getRawText());
+        }
+    }
+    @SubscribeEvent
+    public static void tick(PlayerTickEvent.Post event) {
+        if (event.getEntity() instanceof ServerPlayer player) PlayerState.enforceFreeze(player);
+    }
+    @SubscribeEvent
+    public static void leftClickBlock(PlayerInteractEvent.LeftClickBlock event) { cancelIfFrozen(event.getEntity(), event); }
+    @SubscribeEvent
+    public static void rightClickBlock(PlayerInteractEvent.RightClickBlock event) { cancelIfFrozen(event.getEntity(), event); }
+    @SubscribeEvent
+    public static void rightClickItem(PlayerInteractEvent.RightClickItem event) { cancelIfFrozen(event.getEntity(), event); }
+    @SubscribeEvent
+    public static void entityInteract(PlayerInteractEvent.EntityInteract event) { cancelIfFrozen(event.getEntity(), event); }
+    @SubscribeEvent
+    public static void entityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) { cancelIfFrozen(event.getEntity(), event); }
+    @SubscribeEvent
+    public static void attack(AttackEntityEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && PlayerState.isFrozen(player)) event.setCanceled(true);
+    }
+    @SubscribeEvent
+    public static void breakBlock(BlockEvent.BreakEvent event) {
+        if (event.getPlayer() instanceof ServerPlayer player && PlayerState.isFrozen(player)) event.setCanceled(true);
+    }
+    private static void cancelIfFrozen(net.minecraft.world.entity.player.Player player, net.neoforged.bus.api.ICancellableEvent event) {
+        if (player instanceof ServerPlayer serverPlayer && PlayerState.isFrozen(serverPlayer)) event.setCanceled(true);
     }
     private EssentialsEvents() {}
 }

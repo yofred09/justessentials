@@ -15,3 +15,6 @@
 - Live online-player inventory, armor, offhand, and Ender Chest inspection
 - Auditing and dedicated permission nodes for inventory inspection
 - Optional live Curios inspection, including Accessories installations using the Curios compatibility layer
+- Persistent mute and freeze moderation controls
+- Frozen-player movement, interaction, attack, and block-breaking enforcement
+- Staff mode with reversible flight/god state and private chat routing

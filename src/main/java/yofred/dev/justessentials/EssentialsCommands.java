@@ -63,9 +63,27 @@ public final class EssentialsCommands {
         dispatcher.register(Commands.literal("curiossee")
                 .requires(s -> EssentialsConfig.INVENTORY_INSPECTION.get() && EssentialsPermissions.has(s, EssentialsPermissions.CURIOSSEE))
                 .then(Commands.argument("player", EntityArgument.player()).executes(c -> inspectCurios(c.getSource(), EntityArgument.getPlayer(c, "player")))));
+        dispatcher.register(Commands.literal("mute")
+                .requires(s -> EssentialsConfig.MODERATION.get() && EssentialsPermissions.has(s, EssentialsPermissions.MUTE))
+                .then(Commands.argument("player", EntityArgument.player()).executes(c -> setMuted(c.getSource(), EntityArgument.getPlayer(c, "player"), true))));
+        dispatcher.register(Commands.literal("unmute")
+                .requires(s -> EssentialsConfig.MODERATION.get() && EssentialsPermissions.has(s, EssentialsPermissions.MUTE))
+                .then(Commands.argument("player", EntityArgument.player()).executes(c -> setMuted(c.getSource(), EntityArgument.getPlayer(c, "player"), false))));
+        dispatcher.register(Commands.literal("freeze")
+                .requires(s -> EssentialsConfig.MODERATION.get() && EssentialsPermissions.has(s, EssentialsPermissions.FREEZE))
+                .then(Commands.argument("player", EntityArgument.player()).executes(c -> setFrozen(c.getSource(), EntityArgument.getPlayer(c, "player"), true))));
+        dispatcher.register(Commands.literal("unfreeze")
+                .requires(s -> EssentialsConfig.MODERATION.get() && EssentialsPermissions.has(s, EssentialsPermissions.FREEZE))
+                .then(Commands.argument("player", EntityArgument.player()).executes(c -> setFrozen(c.getSource(), EntityArgument.getPlayer(c, "player"), false))));
+        dispatcher.register(Commands.literal("staffmode")
+                .requires(s -> EssentialsConfig.STAFF_MODE.get() && EssentialsPermissions.has(s, EssentialsPermissions.STAFF_MODE))
+                .executes(c -> staffMode(c.getSource())));
+        dispatcher.register(Commands.literal("staffchattoggle")
+                .requires(s -> EssentialsConfig.STAFF_CHAT.get() && EssentialsPermissions.has(s, EssentialsPermissions.STAFF_CHAT))
+                .executes(c -> staffChatToggle(c.getSource())));
     }
 
-    private static int staffChat(CommandSourceStack source, String message) {
+    static int staffChat(CommandSourceStack source, String message) {
         String actor = source.getTextName();
         Component formatted = Component.literal("[Staff] ").withStyle(ChatFormatting.DARK_AQUA)
                 .append(Component.literal(actor + ": ").withStyle(ChatFormatting.AQUA))
@@ -181,6 +199,41 @@ public final class EssentialsCommands {
             return 0;
         }
         AuditLog.record(source.getServer(), viewer.getGameProfile().getName(), "CURIOSSEE", target.getGameProfile().getName(), "opened");
+        return 1;
+    }
+
+    private static int setMuted(CommandSourceStack source, ServerPlayer target, boolean enabled) {
+        PlayerState.setMuted(target, enabled);
+        String action = enabled ? "MUTE" : "UNMUTE";
+        AuditLog.record(source.getServer(), source.getTextName(), action, target.getGameProfile().getName(), "manual");
+        target.sendSystemMessage(Component.literal(enabled ? "You have been muted." : "You have been unmuted.").withStyle(enabled ? ChatFormatting.RED : ChatFormatting.GREEN));
+        source.sendSuccess(() -> Component.literal(target.getGameProfile().getName() + (enabled ? " muted." : " unmuted.")), true);
+        return 1;
+    }
+
+    private static int setFrozen(CommandSourceStack source, ServerPlayer target, boolean enabled) {
+        PlayerState.setFrozen(target, enabled);
+        target.setDeltaMovement(0, 0, 0);
+        String action = enabled ? "FREEZE" : "UNFREEZE";
+        AuditLog.record(source.getServer(), source.getTextName(), action, target.getGameProfile().getName(), "manual");
+        target.sendSystemMessage(Component.literal(enabled ? "You have been frozen by staff." : "You are no longer frozen.").withStyle(enabled ? ChatFormatting.RED : ChatFormatting.GREEN));
+        source.sendSuccess(() -> Component.literal(target.getGameProfile().getName() + (enabled ? " frozen." : " unfrozen.")), true);
+        return 1;
+    }
+
+    private static int staffMode(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        boolean enabled = PlayerState.toggleStaffMode(player);
+        AuditLog.record(source.getServer(), player.getGameProfile().getName(), "STAFF_MODE", player.getGameProfile().getName(), enabled ? "enabled" : "disabled");
+        source.sendSuccess(() -> Component.literal("Staff mode " + (enabled ? "enabled. Flight, god mode, and staff chat are active." : "disabled. Previous flight and god settings restored.")), false);
+        return 1;
+    }
+
+    private static int staffChatToggle(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        boolean enabled = !PlayerState.isStaffChat(player);
+        PlayerState.setStaffChat(player, enabled);
+        source.sendSuccess(() -> Component.literal("Staff chat mode " + (enabled ? "enabled." : "disabled.")), false);
         return 1;
     }
     private EssentialsCommands() {}
