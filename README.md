@@ -17,13 +17,14 @@ Just Essentials is a modular, server-side administration and utility mod for Min
 - `/back`
 - `/invsee <player>` - live inventory, armor, and offhand inspection
 - `/endersee <player>` - live Ender Chest inspection
+- `/curiossee <player>` - live Curios slots (also supports Accessories through its Curios compatibility layer)
 - Native NeoForge permission nodes with operator-level fallbacks
 - Individually configurable feature modules
 
 ## Planned
 
 - Offline inventory inspection
-- Optional Curios and Accessories adapters
+- Native Accessories API adapter without its compatibility layer
 - Homes, warps, TPA, mute, freeze, staff mode, and richer punishment history
 
 ## Requirements

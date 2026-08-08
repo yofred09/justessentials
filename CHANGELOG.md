@@ -14,3 +14,4 @@
 - Spawn and back teleport commands
 - Live online-player inventory, armor, offhand, and Ender Chest inspection
 - Auditing and dedicated permission nodes for inventory inspection
+- Optional live Curios inspection, including Accessories installations using the Curios compatibility layer

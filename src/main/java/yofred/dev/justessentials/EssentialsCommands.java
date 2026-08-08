@@ -8,6 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.fml.ModList;
 
 public final class EssentialsCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -59,6 +60,9 @@ public final class EssentialsCommands {
         dispatcher.register(Commands.literal("endersee")
                 .requires(s -> EssentialsConfig.INVENTORY_INSPECTION.get() && EssentialsPermissions.has(s, EssentialsPermissions.ENDERSEE))
                 .then(Commands.argument("player", EntityArgument.player()).executes(c -> inspectEnderChest(c.getSource(), EntityArgument.getPlayer(c, "player")))));
+        dispatcher.register(Commands.literal("curiossee")
+                .requires(s -> EssentialsConfig.INVENTORY_INSPECTION.get() && EssentialsPermissions.has(s, EssentialsPermissions.CURIOSSEE))
+                .then(Commands.argument("player", EntityArgument.player()).executes(c -> inspectCurios(c.getSource(), EntityArgument.getPlayer(c, "player")))));
     }
 
     private static int staffChat(CommandSourceStack source, String message) {
@@ -163,6 +167,20 @@ public final class EssentialsCommands {
         ServerPlayer viewer = source.getPlayerOrException();
         viewer.openMenu(InspectionMenus.enderChest(target));
         AuditLog.record(source.getServer(), viewer.getGameProfile().getName(), "ENDERSEE", target.getGameProfile().getName(), "opened");
+        return 1;
+    }
+
+    private static int inspectCurios(CommandSourceStack source, ServerPlayer target) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        if (!ModList.get().isLoaded("curios")) {
+            source.sendFailure(Component.literal("Curios is not installed. Accessories requires its Curios compatibility layer for this command."));
+            return 0;
+        }
+        ServerPlayer viewer = source.getPlayerOrException();
+        if (!CuriosInspection.open(viewer, target)) {
+            source.sendFailure(Component.literal("No Curios inventory capability is available for that player."));
+            return 0;
+        }
+        AuditLog.record(source.getServer(), viewer.getGameProfile().getName(), "CURIOSSEE", target.getGameProfile().getName(), "opened");
         return 1;
     }
     private EssentialsCommands() {}
