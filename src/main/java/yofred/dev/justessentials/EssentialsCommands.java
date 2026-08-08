@@ -90,6 +90,9 @@ public final class EssentialsCommands {
         dispatcher.register(Commands.literal("discordtest")
                 .requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.DISCORD_TEST))
                 .executes(c -> discordTest(c.getSource())));
+        dispatcher.register(Commands.literal("jereload")
+                .requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.DISCORD_TEST))
+                .executes(c -> { c.getSource().sendSuccess(() -> Messages.message("&aConfiguration values are active. File changes are watched by NeoForge."), false); return 1; }));
         registerTemporaryPunishment(dispatcher, "tempmute", PunishmentStore.Kind.MUTE);
         registerTemporaryPunishment(dispatcher, "tempfreeze", PunishmentStore.Kind.FREEZE);
         registerTemporaryPunishment(dispatcher, "tempban", PunishmentStore.Kind.BAN);
@@ -265,7 +268,7 @@ public final class EssentialsCommands {
         if (!enabled) PunishmentStore.deactivate(source.getServer(), target.getUUID(), PunishmentStore.Kind.MUTE);
         String action = enabled ? "MUTE" : "UNMUTE";
         AuditLog.record(source.getServer(), source.getTextName(), action, target.getGameProfile().getName(), "manual");
-        target.sendSystemMessage(Component.literal(enabled ? "You have been muted." : "You have been unmuted.").withStyle(enabled ? ChatFormatting.RED : ChatFormatting.GREEN));
+        target.sendSystemMessage(Messages.message(enabled ? EssentialsConfig.MESSAGE_MUTED_APPLIED.get() : EssentialsConfig.MESSAGE_UNMUTED.get()));
         source.sendSuccess(() -> Component.literal(target.getGameProfile().getName() + (enabled ? " muted." : " unmuted.")), true);
         return 1;
     }
@@ -277,7 +280,7 @@ public final class EssentialsCommands {
         target.setDeltaMovement(0, 0, 0);
         String action = enabled ? "FREEZE" : "UNFREEZE";
         AuditLog.record(source.getServer(), source.getTextName(), action, target.getGameProfile().getName(), "manual");
-        target.sendSystemMessage(Component.literal(enabled ? "You have been frozen by staff." : "You are no longer frozen.").withStyle(enabled ? ChatFormatting.RED : ChatFormatting.GREEN));
+        target.sendSystemMessage(Messages.message(enabled ? EssentialsConfig.MESSAGE_FROZEN.get() : EssentialsConfig.MESSAGE_UNFROZEN.get()));
         source.sendSuccess(() -> Component.literal(target.getGameProfile().getName() + (enabled ? " frozen." : " unfrozen.")), true);
         return 1;
     }
@@ -287,7 +290,7 @@ public final class EssentialsCommands {
         boolean enabled = PlayerState.toggleStaffMode(player);
         if (enabled) StaffTools.activate(player); else StaffTools.deactivate(player);
         AuditLog.record(source.getServer(), player.getGameProfile().getName(), "STAFF_MODE", player.getGameProfile().getName(), enabled ? "enabled" : "disabled");
-        source.sendSuccess(() -> Component.literal("Staff mode " + (enabled ? "enabled. Flight, god mode, and staff chat are active." : "disabled. Previous flight and god settings restored.")), false);
+        source.sendSuccess(() -> Messages.message(enabled ? EssentialsConfig.MESSAGE_STAFF_ON.get() : EssentialsConfig.MESSAGE_STAFF_OFF.get()), false);
         return 1;
     }
 
@@ -325,7 +328,7 @@ public final class EssentialsCommands {
         if (kind == PunishmentStore.Kind.BAN) {
             source.getServer().getCommands().performPrefixedCommand(source, "ban " + target.getGameProfile().getName() + " " + reason + " (until " + expires + ")");
         } else {
-            target.sendSystemMessage(Component.literal("Temporary " + kind.name().toLowerCase(Locale.ROOT) + ": " + reason + " | Expires: " + expires).withStyle(ChatFormatting.RED));
+            target.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_TEMP_PUNISHMENT.get(), java.util.Map.of("type", kind.name().toLowerCase(Locale.ROOT), "reason", reason, "expires", expires)));
         }
         source.sendSuccess(() -> Component.literal("Applied temporary " + kind.name().toLowerCase(Locale.ROOT) + " to " + target.getGameProfile().getName() + " until " + expires + "."), true);
         return 1;
@@ -378,14 +381,14 @@ public final class EssentialsCommands {
     private static int delWarp(CommandSourceStack source, String name) { if (!TravelStore.deleteWarp(source.getServer(), name)) { source.sendFailure(Component.literal("Warp '" + name + "' was not found.")); return 0; } AuditLog.record(source.getServer(), source.getTextName(), "DELETE_WARP", name, "manual"); source.sendSuccess(() -> Component.literal("Warp '" + name + "' deleted."), true); return 1; }
     private static int tpa(CommandSourceStack source, ServerPlayer target) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer requester = source.getPlayerOrException(); if (requester == target) { source.sendFailure(Component.literal("You cannot send a teleport request to yourself.")); return 0; }
-        TravelStore.request(requester, target, EssentialsConfig.TPA_TIMEOUT.get()); target.sendSystemMessage(Component.literal(requester.getGameProfile().getName() + " wants to teleport to you. Use /tpaccept or /tpdeny.")); source.sendSuccess(() -> Component.literal("Teleport request sent."), false); return 1;
+        TravelStore.request(requester, target, EssentialsConfig.TPA_TIMEOUT.get()); target.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_TPA_RECEIVED.get(), java.util.Map.of("player", requester.getGameProfile().getName()))); source.sendSuccess(() -> Messages.message(EssentialsConfig.MESSAGE_TPA_SENT.get(), java.util.Map.of("player", target.getGameProfile().getName())), false); return 1;
     }
     private static int tpAccept(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer target = source.getPlayerOrException(); TravelStore.Request request = TravelStore.takeRequest(target); if (request == null) { source.sendFailure(Component.literal("No active teleport request.")); return 0; }
         ServerPlayer requester = source.getServer().getPlayerList().getPlayer(request.requester()); if (requester == null) { source.sendFailure(Component.literal("The requester is no longer online.")); return 0; }
-        PlayerState.remember(requester); requester.teleportTo(target.serverLevel(), target.getX(), target.getY(), target.getZ(), target.getYRot(), target.getXRot()); requester.sendSystemMessage(Component.literal("Teleport request accepted.")); source.sendSuccess(() -> Component.literal("Teleport request accepted."), false); return 1;
+        PlayerState.remember(requester); requester.teleportTo(target.serverLevel(), target.getX(), target.getY(), target.getZ(), target.getYRot(), target.getXRot()); requester.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_TPA_ACCEPTED.get())); source.sendSuccess(() -> Messages.message(EssentialsConfig.MESSAGE_TPA_ACCEPTED.get()), false); return 1;
     }
-    private static int tpDeny(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException { if (!TravelStore.deny(source.getPlayerOrException())) { source.sendFailure(Component.literal("No active teleport request.")); return 0; } source.sendSuccess(() -> Component.literal("Teleport request denied."), false); return 1; }
+    private static int tpDeny(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException { if (!TravelStore.deny(source.getPlayerOrException())) { source.sendFailure(Component.literal("No active teleport request.")); return 0; } source.sendSuccess(() -> Messages.message(EssentialsConfig.MESSAGE_TPA_DENIED.get()), false); return 1; }
     private static int offlineInspect(CommandSourceStack source, String playerName, boolean enderChest) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer viewer = source.getPlayerOrException(); String error = OfflineInspection.open(viewer, playerName, enderChest);
         if (error != null) { source.sendFailure(Component.literal(error)); return 0; }

@@ -91,6 +91,12 @@ Staff mode safely stores the staff member's complete inventory in persistent pla
 
 If the server restarts while staff mode is active, the saved inventory remains available and is restored when staff mode is disabled.
 
+## Message and menu customization
+
+The server config contains `[messages]`, `[menus]`, and `[staffTools]` sections. Text supports classic `&` color/style codes and placeholders such as `{player}`, `{reason}`, `{type}`, and `{expires}`. You can customize the global prefix, moderation notices, TPA messages, staff-mode messages, menu titles, tool names, or disable the staff hotbar entirely. NeoForge watches the config file; `/jereload` confirms that the current values are active.
+
+Offline inspection uses a protected snapshot menu: clicks on saved slots and all shift-click transfers are rejected server-side. It never writes to player data.
+
 ## Requirements
 
 - Minecraft 1.21.1

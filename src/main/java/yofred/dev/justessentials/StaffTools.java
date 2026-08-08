@@ -15,10 +15,12 @@ final class StaffTools {
         if (!ours.contains(SAVED)) ours.put(SAVED, player.getInventory().save(new ListTag()));
         writeData(player, ours);
         player.getInventory().clearContent();
-        player.getInventory().setItem(0, tool(Items.COMPASS, "Random Player Teleport"));
-        player.getInventory().setItem(1, tool(Items.CHEST, "Right-click Player: Inspect Inventory"));
-        player.getInventory().setItem(2, tool(Items.BLAZE_ROD, "Right-click Player: Freeze / Unfreeze"));
-        player.getInventory().setItem(8, tool(Items.BARRIER, "Exit Staff Mode"));
+        if (EssentialsConfig.STAFF_TOOLS.get()) {
+            player.getInventory().setItem(0, tool(Items.COMPASS, EssentialsConfig.STAFF_TOOL_TELEPORT.get()));
+            player.getInventory().setItem(1, tool(Items.CHEST, EssentialsConfig.STAFF_TOOL_INSPECT.get()));
+            player.getInventory().setItem(2, tool(Items.BLAZE_ROD, EssentialsConfig.STAFF_TOOL_FREEZE.get()));
+            player.getInventory().setItem(8, tool(Items.BARRIER, EssentialsConfig.STAFF_TOOL_EXIT.get()));
+        }
         player.getInventory().setChanged();
     }
     static void deactivate(ServerPlayer player) {
@@ -45,7 +47,7 @@ final class StaffTools {
         }
         return false;
     }
-    private static ItemStack tool(net.minecraft.world.item.Item item, String name) { ItemStack stack = new ItemStack(item); stack.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.literal(name).withStyle(ChatFormatting.AQUA)); return stack; }
+    private static ItemStack tool(net.minecraft.world.item.Item item, String name) { ItemStack stack = new ItemStack(item); stack.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Messages.colored(name)); return stack; }
     private static void writeData(ServerPlayer player, net.minecraft.nbt.CompoundTag ours) { var persistent = player.getPersistentData(); var persisted = persistent.getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG); persisted.put("JustEssentials", ours); persistent.put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, persisted); }
     private StaffTools() {}
 }

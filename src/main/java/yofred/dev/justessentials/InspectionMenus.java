@@ -12,13 +12,13 @@ final class InspectionMenus {
         Container view = new PlayerInventoryView(target);
         return new SimpleMenuProvider(
                 (containerId, viewerInventory, viewer) -> ChestMenu.sixRows(containerId, viewerInventory, view),
-                Component.literal(target.getGameProfile().getName() + " - Inventory"));
+                Messages.plain(EssentialsConfig.MENU_INVENTORY.get(), java.util.Map.of("player", target.getGameProfile().getName())));
     }
 
     static SimpleMenuProvider enderChest(ServerPlayer target) {
         return new SimpleMenuProvider(
                 (containerId, viewerInventory, viewer) -> ChestMenu.threeRows(containerId, viewerInventory, target.getEnderChestInventory()),
-                Component.literal(target.getGameProfile().getName() + " - Ender Chest"));
+                Messages.plain(EssentialsConfig.MENU_ENDER.get(), java.util.Map.of("player", target.getGameProfile().getName())));
     }
 
     private static final class PlayerInventoryView implements Container {

@@ -15,6 +15,8 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -45,9 +47,8 @@ final class OfflineInspection {
             }
             Container snapshot = new ReadOnlyContainer(items);
             int rows = enderChest ? 3 : 6;
-            viewer.openMenu(new SimpleMenuProvider((id, inventory, player) -> rows == 3
-                    ? ChestMenu.threeRows(id, inventory, snapshot)
-                    : ChestMenu.sixRows(id, inventory, snapshot), Component.literal(playerName + (enderChest ? " - Offline Ender Chest" : " - Offline Inventory (Read Only)"))));
+            viewer.openMenu(new SimpleMenuProvider((id, inventory, player) -> new ReadOnlyChestMenu(rows == 3 ? MenuType.GENERIC_9x3 : MenuType.GENERIC_9x6, id, inventory, snapshot, rows),
+                    Messages.plain(enderChest ? EssentialsConfig.MENU_OFFLINE_ENDER.get() : EssentialsConfig.MENU_OFFLINE_INVENTORY.get(), java.util.Map.of("player", playerName))));
             return null;
         } catch (Exception exception) {
             JustEssentials.LOGGER.error("Unable to inspect offline player {}", playerName, exception);
@@ -75,6 +76,18 @@ final class OfflineInspection {
         @Override public boolean stillValid(Player player) { return true; }
         @Override public boolean canPlaceItem(int slot, ItemStack stack) { return false; }
         @Override public void clearContent() {}
+    }
+    private static final class ReadOnlyChestMenu extends ChestMenu {
+        private final int protectedSlots;
+        private ReadOnlyChestMenu(MenuType<ChestMenu> type, int id, net.minecraft.world.entity.player.Inventory inventory, Container container, int rows) {
+            super(type, id, inventory, container, rows);
+            this.protectedSlots = rows * 9;
+        }
+        @Override public void clicked(int slotId, int button, ClickType clickType, Player player) {
+            if (slotId >= 0 && slotId < protectedSlots) return;
+            super.clicked(slotId, button, clickType, player);
+        }
+        @Override public ItemStack quickMoveStack(Player player, int index) { return ItemStack.EMPTY; }
     }
     private OfflineInspection() {}
 }

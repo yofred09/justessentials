@@ -33,3 +33,7 @@
 - Strictly read-only offline inventory and Ender Chest inspection
 - Direct optional Accessories API inspection alongside Curios support
 - Persistent staff-mode inventory backup and interactive staff tool hotbar
+- Configurable prefix, moderation/TPA/staff messages, menu titles, and staff-tool names
+- Ampersand color/style codes and template placeholders
+- `/jereload` configuration confirmation command
+- Hardened offline snapshot menus that reject slot clicks and quick transfers server-side

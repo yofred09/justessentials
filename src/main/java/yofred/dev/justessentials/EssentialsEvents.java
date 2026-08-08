@@ -54,7 +54,7 @@ public final class EssentialsEvents {
         ServerPlayer player = event.getPlayer();
         if (PlayerState.isMuted(player)) {
             event.setCanceled(true);
-            player.sendSystemMessage(Component.literal("You are muted.").withStyle(ChatFormatting.RED));
+            player.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_MUTED.get()));
         } else if (PlayerState.isStaffChat(player) && EssentialsPermissions.has(player, EssentialsPermissions.STAFF_CHAT)) {
             event.setCanceled(true);
             EssentialsCommands.staffChat(player.createCommandSourceStack(), event.getRawText());
