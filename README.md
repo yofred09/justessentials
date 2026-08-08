@@ -15,14 +15,14 @@ Just Essentials is a modular, server-side administration and utility mod for Min
 - `/god [player]`
 - `/spawn`
 - `/back`
+- `/invsee <player>` - live inventory, armor, and offhand inspection
+- `/endersee <player>` - live Ender Chest inspection
 - Native NeoForge permission nodes with operator-level fallbacks
 - Individually configurable feature modules
 
 ## Planned
 
-- Online and offline inventory inspection
-- Ender Chest inspection
-- Armor and offhand slots
+- Offline inventory inspection
 - Optional Curios and Accessories adapters
 - Homes, warps, TPA, mute, freeze, staff mode, and richer punishment history
 

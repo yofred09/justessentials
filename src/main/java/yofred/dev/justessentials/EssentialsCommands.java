@@ -53,6 +53,12 @@ public final class EssentialsCommands {
         dispatcher.register(Commands.literal("back")
                 .requires(s -> EssentialsConfig.TELEPORT_UTILITIES.get() && EssentialsPermissions.has(s, EssentialsPermissions.BACK))
                 .executes(c -> back(c.getSource())));
+        dispatcher.register(Commands.literal("invsee")
+                .requires(s -> EssentialsConfig.INVENTORY_INSPECTION.get() && EssentialsPermissions.has(s, EssentialsPermissions.INVSEE))
+                .then(Commands.argument("player", EntityArgument.player()).executes(c -> inspectInventory(c.getSource(), EntityArgument.getPlayer(c, "player")))));
+        dispatcher.register(Commands.literal("endersee")
+                .requires(s -> EssentialsConfig.INVENTORY_INSPECTION.get() && EssentialsPermissions.has(s, EssentialsPermissions.ENDERSEE))
+                .then(Commands.argument("player", EntityArgument.player()).executes(c -> inspectEnderChest(c.getSource(), EntityArgument.getPlayer(c, "player")))));
     }
 
     private static int staffChat(CommandSourceStack source, String message) {
@@ -143,6 +149,20 @@ public final class EssentialsCommands {
             return 0;
         }
         source.sendSuccess(() -> Component.literal("Returned to your previous location."), false);
+        return 1;
+    }
+
+    private static int inspectInventory(CommandSourceStack source, ServerPlayer target) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer viewer = source.getPlayerOrException();
+        viewer.openMenu(InspectionMenus.playerInventory(target));
+        AuditLog.record(source.getServer(), viewer.getGameProfile().getName(), "INVSEE", target.getGameProfile().getName(), "opened");
+        return 1;
+    }
+
+    private static int inspectEnderChest(CommandSourceStack source, ServerPlayer target) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer viewer = source.getPlayerOrException();
+        viewer.openMenu(InspectionMenus.enderChest(target));
+        AuditLog.record(source.getServer(), viewer.getGameProfile().getName(), "ENDERSEE", target.getGameProfile().getName(), "opened");
         return 1;
     }
     private EssentialsCommands() {}
