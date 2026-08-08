@@ -1,0 +1,34 @@
+package yofred.dev.justessentials;
+
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.server.permission.PermissionAPI;
+import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
+import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
+import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
+
+public final class EssentialsPermissions {
+    public static final PermissionNode<Boolean> STAFF_CHAT = node("staff.chat", false);
+    public static final PermissionNode<Boolean> SILENT_TP = node("staff.teleport.silent", false);
+    public static final PermissionNode<Boolean> HISTORY = node("staff.history", false);
+    public static final PermissionNode<Boolean> KICK = node("punishment.kick", true);
+    public static final PermissionNode<Boolean> BAN = node("punishment.ban", true);
+    public static final PermissionNode<Boolean> HEAL = node("utility.heal", false);
+    public static final PermissionNode<Boolean> FEED = node("utility.feed", false);
+    public static final PermissionNode<Boolean> FLY = node("utility.fly", false);
+    public static final PermissionNode<Boolean> GOD = node("utility.god", true);
+    public static final PermissionNode<Boolean> SPAWN = node("teleport.spawn", false);
+    public static final PermissionNode<Boolean> BACK = node("teleport.back", false);
+
+    private static PermissionNode<Boolean> node(String path, boolean admin) {
+        return new PermissionNode<>(JustEssentials.MODID, path, PermissionTypes.BOOLEAN,
+                (player, id, contexts) -> player != null && player.hasPermissions(admin ? EssentialsConfig.ADMIN_LEVEL.get() : EssentialsConfig.STAFF_LEVEL.get()));
+    }
+
+    public static void register(PermissionGatherEvent.Nodes event) { event.addNodes(STAFF_CHAT, SILENT_TP, HISTORY, KICK, BAN, HEAL, FEED, FLY, GOD, SPAWN, BACK); }
+    public static boolean has(CommandSourceStack source, PermissionNode<Boolean> node) {
+        return !(source.getEntity() instanceof ServerPlayer player) || PermissionAPI.getPermission(player, node);
+    }
+    public static boolean has(ServerPlayer player, PermissionNode<Boolean> node) { return PermissionAPI.getPermission(player, node); }
+    private EssentialsPermissions() {}
+}

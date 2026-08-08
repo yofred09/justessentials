@@ -1,0 +1,19 @@
+name: Bug report
+description: Report a reproducible Just Essentials problem
+title: "[Bug]: "
+body:
+  - type: textarea
+    attributes:
+      label: Problem and expected behavior
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Minecraft, NeoForge, and Just Essentials versions
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction steps, logs, and mod list
+    validations:
+      required: true

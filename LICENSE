@@ -1,0 +1,51 @@
+JUST ESSENTIALS PROPRIETARY LICENSE
+Version 1.0 — 2026-08-08
+
+Copyright © 2026 Yo_Fred (GitHub: yofred09). All rights reserved.
+
+1. DEFINITIONS
+
+“Software” means the Just Essentials source code, compiled binaries, artwork, documentation, branding, and other files distributed with this project.
+
+“Official Release” means an unmodified compiled binary published by Yo_Fred through an official Just Essentials distribution page.
+
+2. PERMITTED USE
+
+You may download and run Official Releases on Minecraft servers for personal or organizational use, including monetized Minecraft servers, provided that you do not sell, sublicense, redistribute, modify, reverse engineer, or claim ownership of the Software.
+
+You may view the publicly available source code solely for security review, compatibility assessment, education, and preparation of bug reports or feature suggestions for this project.
+
+You may link to the official project pages and submit bug reports, feature suggestions, and other feedback through the official issue tracker.
+
+3. PROHIBITED USE
+
+Without prior written permission from Yo_Fred, you may not:
+
+a. copy, reproduce, modify, adapt, translate, or create derivative works from the Software or any substantial part of it;
+b. redistribute, mirror, re-upload, publish, sublicense, rent, lease, sell, or commercially exploit the Software or source code;
+c. incorporate the Software or source code into another project, product, service, mod, plugin, library, or training dataset;
+d. remove or alter copyright, license, attribution, or proprietary notices;
+e. use the Just Essentials name, logo, artwork, or branding in a way that suggests endorsement or affiliation;
+f. circumvent technical restrictions or use reverse engineering except where such restriction is prohibited by applicable law.
+
+4. FEEDBACK AND CONTRIBUTIONS
+
+Bug reports and feature suggestions are welcome. Submitting feedback grants Yo_Fred a perpetual, worldwide, royalty-free right to use, implement, modify, and publish that feedback without obligation or compensation.
+
+Code contributions are not accepted unless Yo_Fred gives prior written permission and the contributor agrees in writing to the applicable contribution terms. Submission of a pull request does not grant any right to use or redistribute the Software.
+
+5. NO TRADEMARK LICENSE
+
+No permission is granted to use the Just Essentials name, logo, or other project branding except to accurately identify an unmodified Official Release or link to the official project.
+
+6. TERMINATION
+
+Any permission granted by this license terminates automatically if you breach its terms. Upon termination, you must stop using the Software and delete all unauthorized copies.
+
+7. DISCLAIMER
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER SHALL NOT BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE SOFTWARE OR ITS USE.
+
+8. ADDITIONAL PERMISSION
+
+For permissions not granted by this license, contact Yo_Fred through the official Just Essentials GitHub repository.
