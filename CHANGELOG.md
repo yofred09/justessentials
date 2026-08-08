@@ -21,3 +21,6 @@
 - Optional asynchronous Discord webhook audit embeds
 - Secure official-webhook URL validation and `/discordtest`
 - Staff-chat Discord logging disabled by default
+- Separate or shared join/leave, moderation, inspection, and staff webhook channels
+- Configurable event modules, server branding, images, footer, player avatars, and embed colors
+- Join online counts and leave-session duration embeds

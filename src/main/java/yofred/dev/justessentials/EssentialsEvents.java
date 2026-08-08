@@ -14,9 +14,15 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber(modid = JustEssentials.MODID)
 public final class EssentialsEvents {
+    private static final Map<UUID, Instant> SESSIONS = new ConcurrentHashMap<>();
     @SubscribeEvent
     public static void commands(RegisterCommandsEvent event) { EssentialsCommands.register(event.getDispatcher()); }
     @SubscribeEvent
@@ -30,6 +36,15 @@ public final class EssentialsEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerState.applyFlight(player);
             PlayerState.enforceFreeze(player);
+            SESSIONS.put(player.getUUID(), Instant.now());
+            DiscordWebhook.playerJoined(player);
+        }
+    }
+    @SubscribeEvent
+    public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            Instant joined = SESSIONS.remove(player.getUUID());
+            DiscordWebhook.playerLeft(player, joined == null ? Duration.ZERO : Duration.between(joined, Instant.now()));
         }
     }
     @SubscribeEvent

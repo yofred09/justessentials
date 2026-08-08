@@ -37,9 +37,31 @@ enabled = true
 webhookUrl = "https://discord.com/api/webhooks/..."
 username = "Just Essentials"
 logStaffChat = false
+
+[discord.channels]
+activityWebhookUrl = "" # shared join/leave channel
+joinWebhookUrl = ""     # optional join-only override
+leaveWebhookUrl = ""    # optional leave-only override
+moderationWebhookUrl = ""
+inspectionWebhookUrl = ""
+staffWebhookUrl = ""
+
+[discord.events]
+joins = true
+leaves = true
+moderation = true
+inspections = true
+staffActions = true
+
+[discord.branding]
+serverName = "My Server"
+thumbnailUrl = "https://example.com/server-icon.png"
+imageUrl = ""
+footerText = "My Server Staff Logs"
+usePlayerAvatars = true
 ```
 
-Restart the server and run `/discordtest`. The webhook is kept only in the server configuration; never commit that file or share its URL. Staff-chat logging is disabled by default for privacy.
+Every category-specific URL is optional and falls back to `webhookUrl`. Join and leave URLs first fall back to `activityWebhookUrl`, allowing either one activity channel or two separate channels. Restart the server and run `/discordtest`. The webhook is kept only in the server configuration; never commit that file or share its URL. Staff-chat logging is disabled by default for privacy.
 
 ## Planned
 
