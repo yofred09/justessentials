@@ -81,6 +81,9 @@ public final class EssentialsCommands {
         dispatcher.register(Commands.literal("staffchattoggle")
                 .requires(s -> EssentialsConfig.STAFF_CHAT.get() && EssentialsPermissions.has(s, EssentialsPermissions.STAFF_CHAT))
                 .executes(c -> staffChatToggle(c.getSource())));
+        dispatcher.register(Commands.literal("discordtest")
+                .requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.DISCORD_TEST))
+                .executes(c -> discordTest(c.getSource())));
     }
 
     static int staffChat(CommandSourceStack source, String message) {
@@ -234,6 +237,17 @@ public final class EssentialsCommands {
         boolean enabled = !PlayerState.isStaffChat(player);
         PlayerState.setStaffChat(player, enabled);
         source.sendSuccess(() -> Component.literal("Staff chat mode " + (enabled ? "enabled." : "disabled.")), false);
+        return 1;
+    }
+
+    private static int discordTest(CommandSourceStack source) {
+        String error = DiscordWebhook.configurationError();
+        if (error != null) {
+            source.sendFailure(Component.literal(error));
+            return 0;
+        }
+        DiscordWebhook.publish(source.getTextName(), "DISCORD_TEST", "Discord", "Manual webhook test");
+        source.sendSuccess(() -> Component.literal("Discord test queued. Check the configured channel."), false);
         return 1;
     }
     private EssentialsCommands() {}

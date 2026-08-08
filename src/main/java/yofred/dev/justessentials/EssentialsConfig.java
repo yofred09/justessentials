@@ -13,6 +13,10 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.BooleanValue INVENTORY_INSPECTION = B.define("modules.inventoryInspection", true);
     public static final ModConfigSpec.BooleanValue MODERATION = B.define("modules.moderation", true);
     public static final ModConfigSpec.BooleanValue STAFF_MODE = B.define("modules.staffMode", true);
+    public static final ModConfigSpec.BooleanValue DISCORD_ENABLED = B.define("discord.enabled", false);
+    public static final ModConfigSpec.ConfigValue<String> DISCORD_WEBHOOK_URL = B.define("discord.webhookUrl", "");
+    public static final ModConfigSpec.ConfigValue<String> DISCORD_USERNAME = B.define("discord.username", "Just Essentials");
+    public static final ModConfigSpec.BooleanValue DISCORD_STAFF_CHAT = B.define("discord.logStaffChat", false);
     public static final ModConfigSpec.IntValue STAFF_LEVEL = B.defineInRange("fallbackStaffPermissionLevel", 2, 0, 4);
     public static final ModConfigSpec.IntValue ADMIN_LEVEL = B.defineInRange("fallbackAdminPermissionLevel", 3, 0, 4);
     public static final ModConfigSpec SPEC = B.build();

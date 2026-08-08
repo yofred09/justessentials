@@ -22,14 +22,30 @@ Just Essentials is a modular, server-side administration and utility mod for Min
 - `/freeze <player>` and `/unfreeze <player>`
 - `/staffmode` - toggles flight, god mode, and staff-chat mode while preserving previous states
 - `/staffchattoggle` - routes normal chat messages to the private staff channel
+- `/discordtest` - validates and queues a Discord webhook test
 - Native NeoForge permission nodes with operator-level fallbacks
 - Individually configurable feature modules
+- Optional asynchronous Discord audit embeds for moderation and staff actions
+
+## Discord audit logs
+
+Start the server once, then edit `config/justessentials-server.toml`:
+
+```toml
+[discord]
+enabled = true
+webhookUrl = "https://discord.com/api/webhooks/..."
+username = "Just Essentials"
+logStaffChat = false
+```
+
+Restart the server and run `/discordtest`. The webhook is kept only in the server configuration; never commit that file or share its URL. Staff-chat logging is disabled by default for privacy.
 
 ## Planned
 
 - Offline inventory inspection
 - Native Accessories API adapter without its compatibility layer
-- Homes, warps, TPA, timed punishments, and richer punishment history
+- Homes, warps, TPA, timed punishments, Discord event filters, and richer punishment history
 
 ## Requirements
 

@@ -18,3 +18,6 @@
 - Persistent mute and freeze moderation controls
 - Frozen-player movement, interaction, attack, and block-breaking enforcement
 - Staff mode with reversible flight/god state and private chat routing
+- Optional asynchronous Discord webhook audit embeds
+- Secure official-webhook URL validation and `/discordtest`
+- Staff-chat Discord logging disabled by default
