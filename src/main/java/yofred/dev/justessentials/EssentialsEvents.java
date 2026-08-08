@@ -14,6 +14,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
@@ -60,8 +61,12 @@ public final class EssentialsEvents {
     }
     @SubscribeEvent
     public static void tick(PlayerTickEvent.Post event) {
-        if (event.getEntity() instanceof ServerPlayer player) PlayerState.enforceFreeze(player);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PlayerState.enforceFreeze(player);
+        }
     }
+    @SubscribeEvent
+    public static void serverTick(ServerTickEvent.Post event) { PunishmentStore.tick(event.getServer()); }
     @SubscribeEvent
     public static void leftClickBlock(PlayerInteractEvent.LeftClickBlock event) { cancelIfFrozen(event.getEntity(), event); }
     @SubscribeEvent

@@ -9,6 +9,9 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.ModList;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Locale;
 
 public final class EssentialsCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -84,6 +87,44 @@ public final class EssentialsCommands {
         dispatcher.register(Commands.literal("discordtest")
                 .requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.DISCORD_TEST))
                 .executes(c -> discordTest(c.getSource())));
+        registerTemporaryPunishment(dispatcher, "tempmute", PunishmentStore.Kind.MUTE);
+        registerTemporaryPunishment(dispatcher, "tempfreeze", PunishmentStore.Kind.FREEZE);
+        registerTemporaryPunishment(dispatcher, "tempban", PunishmentStore.Kind.BAN);
+        dispatcher.register(Commands.literal("punishments")
+                .requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.HISTORY))
+                .then(Commands.argument("player", StringArgumentType.word()).executes(c -> punishments(c.getSource(), StringArgumentType.getString(c, "player"), false))));
+        dispatcher.register(Commands.literal("punishmentinfo")
+                .requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.HISTORY))
+                .then(Commands.argument("player", StringArgumentType.word()).executes(c -> punishments(c.getSource(), StringArgumentType.getString(c, "player"), true))));
+        dispatcher.register(Commands.literal("junban")
+                .requires(s -> EssentialsConfig.PUNISHMENTS.get() && EssentialsPermissions.has(s, EssentialsPermissions.BAN))
+                .then(Commands.argument("player", StringArgumentType.word()).executes(c -> unban(c.getSource(), StringArgumentType.getString(c, "player")))));
+        dispatcher.register(Commands.literal("sethome").requires(s -> EssentialsConfig.HOMES.get() && EssentialsPermissions.has(s, EssentialsPermissions.HOME))
+                .then(Commands.argument("name", StringArgumentType.word()).executes(c -> setHome(c.getSource(), StringArgumentType.getString(c, "name")))));
+        dispatcher.register(Commands.literal("home").requires(s -> EssentialsConfig.HOMES.get() && EssentialsPermissions.has(s, EssentialsPermissions.HOME))
+                .then(Commands.argument("name", StringArgumentType.word()).executes(c -> home(c.getSource(), StringArgumentType.getString(c, "name")))));
+        dispatcher.register(Commands.literal("delhome").requires(s -> EssentialsConfig.HOMES.get() && EssentialsPermissions.has(s, EssentialsPermissions.HOME))
+                .then(Commands.argument("name", StringArgumentType.word()).executes(c -> delHome(c.getSource(), StringArgumentType.getString(c, "name")))));
+        dispatcher.register(Commands.literal("setwarp").requires(s -> EssentialsConfig.WARPS.get() && EssentialsPermissions.has(s, EssentialsPermissions.WARP_ADMIN))
+                .then(Commands.argument("name", StringArgumentType.word()).executes(c -> setWarp(c.getSource(), StringArgumentType.getString(c, "name")))));
+        dispatcher.register(Commands.literal("warp").requires(s -> EssentialsConfig.WARPS.get() && EssentialsPermissions.has(s, EssentialsPermissions.WARP))
+                .then(Commands.argument("name", StringArgumentType.word()).executes(c -> warp(c.getSource(), StringArgumentType.getString(c, "name")))));
+        dispatcher.register(Commands.literal("delwarp").requires(s -> EssentialsConfig.WARPS.get() && EssentialsPermissions.has(s, EssentialsPermissions.WARP_ADMIN))
+                .then(Commands.argument("name", StringArgumentType.word()).executes(c -> delWarp(c.getSource(), StringArgumentType.getString(c, "name")))));
+        dispatcher.register(Commands.literal("tpa").requires(s -> EssentialsConfig.TPA.get() && EssentialsPermissions.has(s, EssentialsPermissions.TPA))
+                .then(Commands.argument("player", EntityArgument.player()).executes(c -> tpa(c.getSource(), EntityArgument.getPlayer(c, "player")))));
+        dispatcher.register(Commands.literal("tpaccept").requires(s -> EssentialsConfig.TPA.get() && EssentialsPermissions.has(s, EssentialsPermissions.TPA)).executes(c -> tpAccept(c.getSource())));
+        dispatcher.register(Commands.literal("tpdeny").requires(s -> EssentialsConfig.TPA.get() && EssentialsPermissions.has(s, EssentialsPermissions.TPA)).executes(c -> tpDeny(c.getSource())));
+    }
+
+    private static void registerTemporaryPunishment(CommandDispatcher<CommandSourceStack> dispatcher, String command, PunishmentStore.Kind kind) {
+        dispatcher.register(Commands.literal(command)
+                .requires(s -> EssentialsConfig.MODERATION.get() && EssentialsPermissions.has(s, EssentialsPermissions.TEMP_PUNISH))
+                .then(Commands.argument("player", EntityArgument.player())
+                        .then(Commands.argument("duration", StringArgumentType.word())
+                                .then(Commands.argument("reason", StringArgumentType.greedyString())
+                                        .executes(c -> temporaryPunishment(c.getSource(), EntityArgument.getPlayer(c, "player"), kind,
+                                                StringArgumentType.getString(c, "duration"), StringArgumentType.getString(c, "reason")))))));
     }
 
     static int staffChat(CommandSourceStack source, String message) {
@@ -206,7 +247,9 @@ public final class EssentialsCommands {
     }
 
     private static int setMuted(CommandSourceStack source, ServerPlayer target, boolean enabled) {
+        if (!canModerate(source, target)) return 0;
         PlayerState.setMuted(target, enabled);
+        if (!enabled) PunishmentStore.deactivate(source.getServer(), target.getUUID(), PunishmentStore.Kind.MUTE);
         String action = enabled ? "MUTE" : "UNMUTE";
         AuditLog.record(source.getServer(), source.getTextName(), action, target.getGameProfile().getName(), "manual");
         target.sendSystemMessage(Component.literal(enabled ? "You have been muted." : "You have been unmuted.").withStyle(enabled ? ChatFormatting.RED : ChatFormatting.GREEN));
@@ -215,7 +258,9 @@ public final class EssentialsCommands {
     }
 
     private static int setFrozen(CommandSourceStack source, ServerPlayer target, boolean enabled) {
+        if (!canModerate(source, target)) return 0;
         PlayerState.setFrozen(target, enabled);
+        if (!enabled) PunishmentStore.deactivate(source.getServer(), target.getUUID(), PunishmentStore.Kind.FREEZE);
         target.setDeltaMovement(0, 0, 0);
         String action = enabled ? "FREEZE" : "UNFREEZE";
         AuditLog.record(source.getServer(), source.getTextName(), action, target.getGameProfile().getName(), "manual");
@@ -249,6 +294,102 @@ public final class EssentialsCommands {
         DiscordWebhook.publish(source.getTextName(), "DISCORD_TEST", "Discord", "Manual webhook test");
         source.sendSuccess(() -> Component.literal("Discord test queued. Check the configured channel."), false);
         return 1;
+    }
+
+    private static int temporaryPunishment(CommandSourceStack source, ServerPlayer target, PunishmentStore.Kind kind, String durationText, String reason) {
+        if (!canModerate(source, target)) return 0;
+        Duration duration = PunishmentStore.parseDuration(durationText);
+        if (duration == null || duration.compareTo(Duration.ofDays(3650)) > 0) {
+            source.sendFailure(Component.literal("Invalid duration. Use 30s, 15m, 2h, 7d, or 4w (maximum 3650d)."));
+            return 0;
+        }
+        PunishmentStore.Entry entry = PunishmentStore.add(source.getServer(), target, kind, source.getTextName(), reason, duration);
+        if (kind == PunishmentStore.Kind.MUTE) PlayerState.setMuted(target, true);
+        if (kind == PunishmentStore.Kind.FREEZE) PlayerState.setFrozen(target, true);
+        AuditLog.record(source.getServer(), source.getTextName(), "TEMP_" + kind, target.getGameProfile().getName(), durationText + " | " + reason);
+        String expires = Instant.ofEpochMilli(entry.expiresAt()).toString();
+        if (kind == PunishmentStore.Kind.BAN) {
+            source.getServer().getCommands().performPrefixedCommand(source, "ban " + target.getGameProfile().getName() + " " + reason + " (until " + expires + ")");
+        } else {
+            target.sendSystemMessage(Component.literal("Temporary " + kind.name().toLowerCase(Locale.ROOT) + ": " + reason + " | Expires: " + expires).withStyle(ChatFormatting.RED));
+        }
+        source.sendSuccess(() -> Component.literal("Applied temporary " + kind.name().toLowerCase(Locale.ROOT) + " to " + target.getGameProfile().getName() + " until " + expires + "."), true);
+        return 1;
+    }
+
+    private static int punishments(CommandSourceStack source, String playerName, boolean activeOnly) {
+        var entries = PunishmentStore.history(source.getServer(), playerName).stream().filter(entry -> !activeOnly || entry.active() && entry.expiresAt() > System.currentTimeMillis()).toList();
+        if (entries.isEmpty()) {
+            source.sendFailure(Component.literal("No " + (activeOnly ? "active " : "") + "punishments found for " + playerName + "."));
+            return 0;
+        }
+        int start = Math.max(0, entries.size() - 10);
+        for (var entry : entries.subList(start, entries.size())) {
+            String status = entry.active() && entry.expiresAt() > System.currentTimeMillis() ? "ACTIVE" : "EXPIRED/REMOVED";
+            source.sendSuccess(() -> Component.literal("[" + status + "] " + entry.kind() + " by " + entry.actor() + " | " + entry.reason() + " | until " + Instant.ofEpochMilli(entry.expiresAt())), false);
+        }
+        return entries.size();
+    }
+
+    private static int unban(CommandSourceStack source, String playerName) {
+        source.getServer().getCommands().performPrefixedCommand(source, "pardon " + playerName);
+        PunishmentStore.deactivate(source.getServer(), playerName, PunishmentStore.Kind.BAN);
+        AuditLog.record(source.getServer(), source.getTextName(), "UNBAN", playerName, "manual");
+        return 1;
+    }
+
+    private static int setHome(CommandSourceStack source, String name) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        if (!TravelStore.setHome(source.getServer(), player, name, EssentialsConfig.MAX_HOMES.get())) { source.sendFailure(Component.literal("Home limit reached (" + EssentialsConfig.MAX_HOMES.get() + ").")); return 0; }
+        source.sendSuccess(() -> Component.literal("Home '" + name + "' set."), false); return 1;
+    }
+    private static int home(CommandSourceStack source, String name) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException(); var location = TravelStore.home(source.getServer(), player, name);
+        if (location == null || !TravelStore.teleport(player, location)) { source.sendFailure(Component.literal("Home '" + name + "' was not found or its dimension is unavailable.")); return 0; }
+        source.sendSuccess(() -> Component.literal("Teleported to home '" + name + "'."), false); return 1;
+    }
+    private static int delHome(CommandSourceStack source, String name) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        if (!TravelStore.deleteHome(source.getServer(), source.getPlayerOrException(), name)) { source.sendFailure(Component.literal("Home '" + name + "' was not found.")); return 0; }
+        source.sendSuccess(() -> Component.literal("Home '" + name + "' deleted."), false); return 1;
+    }
+    private static int setWarp(CommandSourceStack source, String name) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException(); TravelStore.setWarp(source.getServer(), player, name); AuditLog.record(source.getServer(), source.getTextName(), "SET_WARP", name, player.level().dimension().location().toString());
+        source.sendSuccess(() -> Component.literal("Warp '" + name + "' set."), true); return 1;
+    }
+    private static int warp(CommandSourceStack source, String name) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        var location = TravelStore.warp(source.getServer(), name); ServerPlayer player = source.getPlayerOrException();
+        if (location == null || !TravelStore.teleport(player, location)) { source.sendFailure(Component.literal("Warp '" + name + "' was not found or its dimension is unavailable.")); return 0; }
+        source.sendSuccess(() -> Component.literal("Teleported to warp '" + name + "'."), false); return 1;
+    }
+    private static int delWarp(CommandSourceStack source, String name) { if (!TravelStore.deleteWarp(source.getServer(), name)) { source.sendFailure(Component.literal("Warp '" + name + "' was not found.")); return 0; } AuditLog.record(source.getServer(), source.getTextName(), "DELETE_WARP", name, "manual"); source.sendSuccess(() -> Component.literal("Warp '" + name + "' deleted."), true); return 1; }
+    private static int tpa(CommandSourceStack source, ServerPlayer target) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer requester = source.getPlayerOrException(); if (requester == target) { source.sendFailure(Component.literal("You cannot send a teleport request to yourself.")); return 0; }
+        TravelStore.request(requester, target, EssentialsConfig.TPA_TIMEOUT.get()); target.sendSystemMessage(Component.literal(requester.getGameProfile().getName() + " wants to teleport to you. Use /tpaccept or /tpdeny.")); source.sendSuccess(() -> Component.literal("Teleport request sent."), false); return 1;
+    }
+    private static int tpAccept(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer target = source.getPlayerOrException(); TravelStore.Request request = TravelStore.takeRequest(target); if (request == null) { source.sendFailure(Component.literal("No active teleport request.")); return 0; }
+        ServerPlayer requester = source.getServer().getPlayerList().getPlayer(request.requester()); if (requester == null) { source.sendFailure(Component.literal("The requester is no longer online.")); return 0; }
+        PlayerState.remember(requester); requester.teleportTo(target.serverLevel(), target.getX(), target.getY(), target.getZ(), target.getYRot(), target.getXRot()); requester.sendSystemMessage(Component.literal("Teleport request accepted.")); source.sendSuccess(() -> Component.literal("Teleport request accepted."), false); return 1;
+    }
+    private static int tpDeny(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException { if (!TravelStore.deny(source.getPlayerOrException())) { source.sendFailure(Component.literal("No active teleport request.")); return 0; } source.sendSuccess(() -> Component.literal("Teleport request denied."), false); return 1; }
+
+    private static boolean canModerate(CommandSourceStack source, ServerPlayer target) {
+        if (!(source.getEntity() instanceof ServerPlayer actor)) return true;
+        if (actor.getUUID().equals(target.getUUID())) {
+            source.sendFailure(Component.literal("You cannot punish yourself."));
+            return false;
+        }
+        int actorLevel = permissionLevel(actor);
+        if (actorLevel < 4 && target.hasPermissions(actorLevel)) {
+            source.sendFailure(Component.literal("You cannot punish a player with an equal or higher permission level."));
+            return false;
+        }
+        return true;
+    }
+
+    private static int permissionLevel(ServerPlayer player) {
+        for (int level = 4; level >= 0; level--) if (player.hasPermissions(level)) return level;
+        return 0;
     }
     private EssentialsCommands() {}
 }

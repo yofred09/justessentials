@@ -23,6 +23,14 @@ Just Essentials is a modular, server-side administration and utility mod for Min
 - `/staffmode` - toggles flight, god mode, and staff-chat mode while preserving previous states
 - `/staffchattoggle` - routes normal chat messages to the private staff channel
 - `/discordtest` - validates and queues a Discord webhook test
+- `/tempmute <player> <duration> <reason>`
+- `/tempfreeze <player> <duration> <reason>`
+- `/tempban <player> <duration> <reason>`
+- `/punishments <player>` and `/punishmentinfo <player>`
+- `/junban <player>` - audited unban
+- `/sethome <name>`, `/home <name>`, and `/delhome <name>`
+- `/setwarp <name>`, `/warp <name>`, and `/delwarp <name>`
+- `/tpa <player>`, `/tpaccept`, and `/tpdeny`
 - Native NeoForge permission nodes with operator-level fallbacks
 - Individually configurable feature modules
 - Optional asynchronous Discord audit embeds for moderation and staff actions
@@ -67,7 +75,7 @@ Every category-specific URL is optional and falls back to `webhookUrl`. Join and
 
 - Offline inventory inspection
 - Native Accessories API adapter without its compatibility layer
-- Homes, warps, TPA, timed punishments, Discord event filters, and richer punishment history
+- Offline inventory inspection, direct Accessories API support, staff hotbar tools, and translatable/custom messages
 
 ## Requirements
 

@@ -24,3 +24,9 @@
 - Separate or shared join/leave, moderation, inspection, and staff webhook channels
 - Configurable event modules, server branding, images, footer, player avatars, and embed colors
 - Join online counts and leave-session duration embeds
+- Persistent temporary mute, freeze, and ban with automatic expiry
+- Duration parsing for seconds, minutes, hours, days, and weeks
+- Punishment history/status commands and audited unban
+- Staff hierarchy and self-punishment protection
+- Persistent named homes and server warps across dimensions
+- TPA requests with configurable timeout, accept, and deny commands

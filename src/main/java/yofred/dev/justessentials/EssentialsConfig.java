@@ -13,6 +13,11 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.BooleanValue INVENTORY_INSPECTION = B.define("modules.inventoryInspection", true);
     public static final ModConfigSpec.BooleanValue MODERATION = B.define("modules.moderation", true);
     public static final ModConfigSpec.BooleanValue STAFF_MODE = B.define("modules.staffMode", true);
+    public static final ModConfigSpec.BooleanValue HOMES = B.define("modules.homes", true);
+    public static final ModConfigSpec.BooleanValue WARPS = B.define("modules.warps", true);
+    public static final ModConfigSpec.BooleanValue TPA = B.define("modules.tpa", true);
+    public static final ModConfigSpec.IntValue MAX_HOMES = B.defineInRange("travel.maxHomesPerPlayer", 5, 1, 100);
+    public static final ModConfigSpec.IntValue TPA_TIMEOUT = B.defineInRange("travel.tpaTimeoutSeconds", 60, 10, 600);
     public static final ModConfigSpec.BooleanValue DISCORD_ENABLED = B.define("discord.enabled", false);
     public static final ModConfigSpec.ConfigValue<String> DISCORD_WEBHOOK_URL = B.define("discord.webhookUrl", "");
     public static final ModConfigSpec.ConfigValue<String> DISCORD_USERNAME = B.define("discord.username", "Just Essentials");
