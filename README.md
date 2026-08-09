@@ -2,6 +2,8 @@
 
 Just Essentials is a modular, server-side administration and utility mod for Minecraft 1.21.1 on NeoForge. Players do not need to install it.
 
+Complete installation, commands, permissions, configuration, integrations, and troubleshooting are maintained in the [Just Essentials Wiki](https://github.com/yofred09/justessentials/wiki).
+
 ## Implemented in 0.1.0
 
 - `/staffchat <message>` and `/sc <message>`
@@ -104,6 +106,10 @@ Offline inspection uses a protected snapshot menu: clicks on saved slots and all
 - Minecraft 1.21.1
 - NeoForge 21.1.x
 - Java 21
+
+## Official distribution
+
+Official compiled releases are distributed through CurseForge and Modrinth. GitHub is used for documentation, issue reporting, security review, and compatibility assessment.
 
 ## License
 
