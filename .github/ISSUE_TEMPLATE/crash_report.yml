@@ -1,0 +1,33 @@
+﻿name: Crash report
+description: Report a server crash involving Just Essentials.
+title: "[Crash]: "
+labels: ["bug", "crash", "needs-triage"]
+body:
+  - type: input
+    id: version
+    attributes: { label: Just Essentials version }
+    validations: { required: true }
+  - type: input
+    id: environment
+    attributes: { label: Minecraft, NeoForge, and Java versions }
+    validations: { required: true }
+  - type: textarea
+    id: action
+    attributes: { label: "What triggered the crash?", description: Describe the command, item, action, or login sequence immediately before the crash. }
+    validations: { required: true }
+  - type: textarea
+    id: crash
+    attributes: { label: Crash report and latest.log, description: Attach both files or provide links. Do not paste only the final exception line. }
+    validations: { required: true }
+  - type: textarea
+    id: mods
+    attributes: { label: Mod list, description: Attach the complete mod list with versions. }
+    validations: { required: true }
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I removed passwords, tokens, webhook URLs, and private player data.
+          required: true
+

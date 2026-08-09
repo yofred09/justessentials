@@ -1,0 +1,24 @@
+﻿name: Feature request
+description: Suggest an improvement for Just Essentials.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes: { label: Problem to solve, description: Describe the server-management problem rather than only the command you want. }
+    validations: { required: true }
+  - type: textarea
+    id: solution
+    attributes: { label: Suggested solution, description: Explain the behavior, permissions, configuration, and expected server-side compatibility. }
+    validations: { required: true }
+  - type: textarea
+    id: alternatives
+    attributes: { label: Alternatives considered }
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This belongs in an administration mod rather than Just Vanish or Just Core.
+          required: true
+

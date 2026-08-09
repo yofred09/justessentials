@@ -1,19 +1,40 @@
-name: Bug report
-description: Report a reproducible Just Essentials problem
+﻿name: Bug report
+description: Report behavior that is incorrect but does not crash the server.
 title: "[Bug]: "
+labels: ["bug", "needs-triage"]
 body:
-  - type: textarea
+  - type: markdown
     attributes:
-      label: Problem and expected behavior
-    validations:
-      required: true
+      value: Thanks for helping improve Just Essentials. Do not include private server data or webhook URLs.
   - type: input
-    attributes:
-      label: Minecraft, NeoForge, and Just Essentials versions
-    validations:
-      required: true
+    id: version
+    attributes: { label: Just Essentials version, placeholder: "0.1.0" }
+    validations: { required: true }
+  - type: input
+    id: environment
+    attributes: { label: Minecraft and NeoForge versions, placeholder: "Minecraft 1.21.1, NeoForge 21.1.x" }
+    validations: { required: true }
   - type: textarea
+    id: description
+    attributes: { label: "What happened?", description: Explain what you observed and what you expected instead. }
+    validations: { required: true }
+  - type: textarea
+    id: reproduction
+    attributes: { label: Steps to reproduce, placeholder: "1. Enable vanish\n2. ..." }
+    validations: { required: true }
+  - type: textarea
+    id: mods
+    attributes: { label: Relevant mods, description: Include names and exact versions, especially Just Vanish, Just Core, Curios, Accessories, voice-chat, and permission mods. }
+  - type: textarea
+    id: logs
+    attributes: { label: Logs, description: Attach latest.log or paste a link. Remove private information first. }
+  - type: checkboxes
+    id: checks
     attributes:
-      label: Reproduction steps, logs, and mod list
-    validations:
-      required: true
+      label: Checklist
+      options:
+        - label: I tested without another administration mod installed.
+          required: true
+        - label: I searched for an existing report.
+          required: true
+

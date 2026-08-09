@@ -1,0 +1,25 @@
+﻿name: Compatibility report
+description: Report an interaction between Just Essentials and another mod or plugin.
+title: "[Compatibility]: Just Essentials + "
+labels: ["compatibility", "needs-triage"]
+body:
+  - type: input
+    id: versions
+    attributes: { label: Just Essentials, Minecraft, and NeoForge versions }
+    validations: { required: true }
+  - type: input
+    id: other
+    attributes: { label: Other mod or plugin, description: Include its exact version and official project link. }
+    validations: { required: true }
+  - type: textarea
+    id: behavior
+    attributes: { label: Compatibility problem, description: Explain the visible behavior and the result you expected. }
+    validations: { required: true }
+  - type: textarea
+    id: reproduction
+    attributes: { label: Minimal reproduction, description: List the smallest mod set and exact steps that reproduce it. }
+    validations: { required: true }
+  - type: textarea
+    id: logs
+    attributes: { label: Logs or screenshots }
+
