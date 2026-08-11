@@ -109,6 +109,8 @@ Players can control the presentation with `/tab on|off|toggle|status` and `/tab 
 
 Enable `modules.customJoinLeaveMessages` to replace the vanilla join and leave announcements. `activityMessages.joinMessage` and `activityMessages.leaveMessage` support `&`/HEX colors plus `{player}`, `{online}`, `{max}`, and `{world}`. Each announcement can be disabled independently, and a blank template hides it completely. When Just Vanish is installed, unauthorized viewers never receive announcements for vanished staff.
 
+With `activityMessages.staffAlwaysSeesMessages = true`, players holding `justessentials.staff.activity` still receive hidden announcements, including activity from vanished players. The permission falls back to operator level 2 by default.
+
 Offline inspection uses a protected snapshot menu: clicks on saved slots and all shift-click transfers are rejected server-side. It never writes to player data.
 
 ## Requirements

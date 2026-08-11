@@ -19,6 +19,7 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.BooleanValue JOIN_LEAVE_MESSAGES = B.comment("Replace vanilla join and leave messages with configurable server-side messages.").define("modules.customJoinLeaveMessages", false);
     public static final ModConfigSpec.BooleanValue SHOW_JOIN_MESSAGE = B.define("activityMessages.showJoinMessage", true);
     public static final ModConfigSpec.BooleanValue SHOW_LEAVE_MESSAGE = B.define("activityMessages.showLeaveMessage", true);
+    public static final ModConfigSpec.BooleanValue STAFF_ALWAYS_SEES_ACTIVITY = B.comment("Players with justessentials.staff.activity receive join/leave messages even when hidden from regular players or when the subject is vanished.").define("activityMessages.staffAlwaysSeesMessages", true);
     public static final ModConfigSpec.ConfigValue<String> JOIN_MESSAGE = B.comment("Blank hides the message. Supports &/HEX colors and {player}, {online}, {max}, {world}.").define("activityMessages.joinMessage", "&8[&a+&8] &f{player} &7joined the server.");
     public static final ModConfigSpec.ConfigValue<String> LEAVE_MESSAGE = B.comment("Blank hides the message. Supports &/HEX colors and {player}, {online}, {max}, {world}.").define("activityMessages.leaveMessage", "&8[&c-&8] &f{player} &7left the server.");
     public static final ModConfigSpec.BooleanValue TAB_LIST = B.comment("Enable the configurable server-side player-list header and footer.").define("modules.customTabList", true);

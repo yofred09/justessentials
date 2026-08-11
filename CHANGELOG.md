@@ -16,6 +16,7 @@
 - Configurable dimensions where the header, footer, and boss bar are disabled
 - Optional custom join and leave messages with colors, HEX, placeholders, and independent visibility switches
 - Join and leave messages can be hidden completely without affecting other system messages
+- Staff activity monitoring through the `justessentials.staff.activity` permission
 
 ### Fixed
 
@@ -25,6 +26,7 @@
 - Session-only bossbar choices now work when persistent choices are disabled
 - Build scripts no longer use deprecated Gradle repository syntax
 - Custom activity messages respect Just Vanish visibility separately for every viewer
+- Authorized staff can optionally receive hidden or vanished-player activity messages
 
 ## [0.1.0] - 2026-08-09
 
