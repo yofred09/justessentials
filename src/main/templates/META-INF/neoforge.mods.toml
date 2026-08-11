@@ -32,6 +32,13 @@ ordering="NONE"
 side="SERVER"
 
 [[dependencies.${mod_id}]]
+modId="justcore"
+type="required"
+versionRange="[0.2.0,)"
+ordering="AFTER"
+side="SERVER"
+
+[[dependencies.${mod_id}]]
 modId="justvanish"
 type="optional"
 versionRange="[1.2.0,)"

@@ -123,6 +123,8 @@ configurations {
 }
 
 dependencies {
+    compileOnly files('libs/justcore-0.2.0.jar')
+    localRuntime files('libs/justcore-0.2.0.jar')
     compileOnly "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1:api"
     localRuntime "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1"
     compileOnly "io.wispforest:accessories-common:1.1.0-beta.51+1.21.1-mojmap"

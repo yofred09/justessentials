@@ -29,6 +29,8 @@ public final class EssentialsEvents {
     @SubscribeEvent
     public static void permissions(PermissionGatherEvent.Nodes event) { EssentialsPermissions.register(event); }
     @SubscribeEvent
+    public static void coreAudit(yofred.dev.justcore.api.event.StaffActionEvent event) { var e=event.entry(); DiscordWebhook.publish(e.actor()==null?"System":e.actor().toString(),e.action(),e.target()==null?e.moduleId():e.target().toString(),e.details()); }
+    @SubscribeEvent
     public static void damage(LivingIncomingDamageEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && PlayerState.isGod(player)) event.setCanceled(true);
     }

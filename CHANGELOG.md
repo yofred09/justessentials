@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.1] - 2026-08-11
+
+### Changed
+
+- Just Core 0.2.0 or newer is now required
+- Replaced the direct Just Vanish reflection bridge with the shared Just Core player-state API
+- Registered Just Essentials in the central Just Core module registry
+- Published staff actions through the central Just Core audit service and event bus
+
+### Integration
+
+- Just Vanish audit events can be delivered to Discord by Just Essentials without either feature mod depending directly on the other
+
 ## [0.3.0] - 2026-08-11
 
 ### Added

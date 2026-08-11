@@ -18,7 +18,7 @@ public final class AuditLog {
         String line = Instant.now() + "\t" + actor + "\t" + action + "\t" + target + "\t" + safe + System.lineSeparator();
         try { Files.writeString(path(server), line, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND); }
         catch (IOException e) { JustEssentials.LOGGER.error("Unable to write Just Essentials audit log", e); }
-        DiscordWebhook.publish(actor, action, target, safe);
+        yofred.dev.justcore.api.AuditService.record(server, JustEssentials.MODID, action, null, null, actor + " -> " + target + ": " + safe);
     }
 
     public static List<String> history(MinecraftServer server, String playerName, int limit) {

@@ -1,6 +1,8 @@
 # Just Essentials
 
-Just Essentials is a modular, server-side administration and utility mod for Minecraft 1.21.1 on NeoForge. Players do not need to install it.
+Just Essentials is a modular, server-side administration and utility mod for Minecraft 1.21.1 on NeoForge. Players do not need to install it. Just Core 0.2.0 or newer is required on the server.
+
+Install both the Just Core and Just Essentials JAR files in the server's `mods` folder. Install Just Vanish separately when vanish integration is wanted.
 
 Complete installation, commands, permissions, configuration, integrations, and troubleshooting are maintained in the [Just Essentials Wiki](https://github.com/yofred09/justessentials/wiki).
 
