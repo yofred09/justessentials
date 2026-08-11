@@ -44,6 +44,8 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.BooleanValue TAB_BOSSBAR_REMEMBER_TOGGLE = B.define("tabList.bossBar.rememberPlayerToggle", true);
     public static final ModConfigSpec.IntValue MAX_HOMES = B.defineInRange("travel.maxHomesPerPlayer", 5, 1, 100);
     public static final ModConfigSpec.IntValue TPA_TIMEOUT = B.defineInRange("travel.tpaTimeoutSeconds", 60, 10, 600);
+    public static final ModConfigSpec.IntValue TELEPORT_COOLDOWN = B.comment("Cooldown for home, warp and accepted TPA teleports. Staff with admin permissions are not automatically exempt.").defineInRange("travel.teleportCooldownSeconds", 3, 0, 3600);
+    public static final ModConfigSpec.BooleanValue SAFE_TELEPORT = B.comment("Search nearby for solid ground and two air blocks before teleporting.").define("travel.safeTeleport", true);
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_PREFIX = B.define("messages.prefix", "&8[&bJust Essentials&8] &r");
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_MUTED = B.define("messages.muted", "&cYou are muted.");
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_MUTED_APPLIED = B.define("messages.mutedApplied", "&cYou have been muted by staff.");

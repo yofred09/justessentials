@@ -28,6 +28,7 @@ final class TravelStore {
     }
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<UUID, Request> REQUESTS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> LAST_TELEPORT = new ConcurrentHashMap<>();
 
     static synchronized boolean setHome(MinecraftServer server, ServerPlayer player, String name, int max) {
         Data data = load(server);
@@ -54,12 +55,18 @@ final class TravelStore {
     static synchronized Location warp(MinecraftServer server, String name) { return load(server).warps.get(name.toLowerCase(java.util.Locale.ROOT)); }
     static synchronized java.util.Set<String> warps(MinecraftServer server) { return new java.util.TreeSet<>(load(server).warps.keySet()); }
     static boolean teleport(ServerPlayer player, Location location) {
+        if (!ready(player)) return false;
         ResourceLocation id = ResourceLocation.tryParse(location.dimension());
         if (id == null) return false;
         ServerLevel level = player.server.getLevel(ResourceKey.create(Registries.DIMENSION, id));
         if (level == null) return false;
-        PlayerState.remember(player); player.teleportTo(level, location.x(), location.y(), location.z(), location.yaw(), location.pitch()); return true;
+        net.minecraft.core.BlockPos destination = net.minecraft.core.BlockPos.containing(location.x(), location.y(), location.z());
+        if (EssentialsConfig.SAFE_TELEPORT.get()) { destination = safe(level, destination); if (destination == null) return false; }
+        PlayerState.remember(player); player.teleportTo(level, destination.getX()+0.5D, destination.getY(), destination.getZ()+0.5D, location.yaw(), location.pitch()); LAST_TELEPORT.put(player.getUUID(),System.currentTimeMillis()); return true;
     }
+    static boolean ready(ServerPlayer player) { int seconds=EssentialsConfig.TELEPORT_COOLDOWN.get(); return seconds<=0 || System.currentTimeMillis()-LAST_TELEPORT.getOrDefault(player.getUUID(),0L)>=seconds*1000L; }
+    static void markTeleported(ServerPlayer player) { LAST_TELEPORT.put(player.getUUID(),System.currentTimeMillis()); }
+    private static net.minecraft.core.BlockPos safe(ServerLevel level,net.minecraft.core.BlockPos origin) { for(int radius=0;radius<=4;radius++) for(int dy=-4;dy<=8;dy++) for(int dx=-radius;dx<=radius;dx++) for(int dz=-radius;dz<=radius;dz++){ net.minecraft.core.BlockPos p=origin.offset(dx,dy,dz); if(p.getY()<=level.getMinBuildHeight()+1||p.getY()>=level.getMaxBuildHeight()-2)continue; if(level.isEmptyBlock(p)&&level.isEmptyBlock(p.above())&&!level.getBlockState(p.below()).getCollisionShape(level,p.below()).isEmpty())return p; } return null; }
     static void request(ServerPlayer requester, ServerPlayer target, int timeoutSeconds) { REQUESTS.put(target.getUUID(), new Request(requester.getUUID(), System.currentTimeMillis() + timeoutSeconds * 1000L)); }
     static Request takeRequest(ServerPlayer target) { Request request = REQUESTS.remove(target.getUUID()); return request != null && request.expiresAt() >= System.currentTimeMillis() ? request : null; }
     static boolean deny(ServerPlayer target) { return REQUESTS.remove(target.getUUID()) != null; }
