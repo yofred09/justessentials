@@ -35,6 +35,16 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.ConfigValue<String> TAB_NAME_FORMAT = B.comment("Global server-side player-list name format.").define("tabList.playerNames.format", "{staff_prefix}{player}{vanish_suffix}");
     public static final ModConfigSpec.ConfigValue<String> TAB_STAFF_PREFIX = B.define("tabList.playerNames.staffPrefix", "&b[Staff] &f");
     public static final ModConfigSpec.ConfigValue<String> TAB_VANISH_SUFFIX = B.define("tabList.playerNames.vanishSuffix", " &7[Vanished]");
+    public static final ModConfigSpec.ConfigValue<String> TAB_OWNER_PREFIX = B.define("tabList.playerNames.groups.owner", "&#FF5555[Owner] &f");
+    public static final ModConfigSpec.ConfigValue<String> TAB_ADMIN_PREFIX = B.define("tabList.playerNames.groups.admin", "&c[Admin] &f");
+    public static final ModConfigSpec.ConfigValue<String> TAB_MOD_PREFIX = B.define("tabList.playerNames.groups.moderator", "&b[Mod] &f");
+    public static final ModConfigSpec.ConfigValue<String> TAB_HELPER_PREFIX = B.define("tabList.playerNames.groups.helper", "&a[Helper] &f");
+    public static final ModConfigSpec.ConfigValue<String> TAB_DEFAULT_PREFIX = B.define("tabList.playerNames.groups.default", "&7");
+    public static final ModConfigSpec.BooleanValue TAB_WORLD_PROFILES = B.define("tabList.worldProfiles.enabled", false);
+    public static final ModConfigSpec.ConfigValue<String> TAB_NETHER_HEADER = B.define("tabList.worldProfiles.netherHeader", "&4&lTHE NETHER\n&7Stay alert, &f{player}");
+    public static final ModConfigSpec.ConfigValue<String> TAB_NETHER_FOOTER = B.define("tabList.worldProfiles.netherFooter", "&7Online: &a{visible}&8/&a{max}");
+    public static final ModConfigSpec.ConfigValue<String> TAB_END_HEADER = B.define("tabList.worldProfiles.endHeader", "&5&lTHE END\n&7Good luck, &f{player}");
+    public static final ModConfigSpec.ConfigValue<String> TAB_END_FOOTER = B.define("tabList.worldProfiles.endFooter", "&7Online: &a{visible}&8/&a{max}");
     public static final ModConfigSpec.BooleanValue TAB_BOSSBAR = B.define("tabList.bossBar.enabled", false);
     public static final ModConfigSpec.ConfigValue<String> TAB_BOSSBAR_TEXT = B.define("tabList.bossBar.text", "&#AA54F4&lJUST NETWORK &8| &f{visible}/{max} online");
     public static final ModConfigSpec.ConfigValue<String> TAB_BOSSBAR_COLOR = B.comment("PINK, BLUE, RED, GREEN, YELLOW, PURPLE, or WHITE.").define("tabList.bossBar.color", "PURPLE");
@@ -46,6 +56,8 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.IntValue TPA_TIMEOUT = B.defineInRange("travel.tpaTimeoutSeconds", 60, 10, 600);
     public static final ModConfigSpec.IntValue TELEPORT_COOLDOWN = B.comment("Cooldown for home, warp and accepted TPA teleports. Staff with admin permissions are not automatically exempt.").defineInRange("travel.teleportCooldownSeconds", 3, 0, 3600);
     public static final ModConfigSpec.BooleanValue SAFE_TELEPORT = B.comment("Search nearby for solid ground and two air blocks before teleporting.").define("travel.safeTeleport", true);
+    public static final ModConfigSpec.IntValue TELEPORT_WARMUP = B.comment("Seconds before home, warp and TPA teleports. Moving cancels the teleport.").defineInRange("travel.teleportWarmupSeconds", 3, 0, 300);
+    public static final ModConfigSpec.DoubleValue TELEPORT_MOVE_TOLERANCE = B.comment("Maximum movement during warmup before cancellation.").defineInRange("travel.warmupMoveTolerance", 0.15D, 0.0D, 5.0D);
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_PREFIX = B.define("messages.prefix", "&8[&bJust Essentials&8] &r");
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_MUTED = B.define("messages.muted", "&cYou are muted.");
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_MUTED_APPLIED = B.define("messages.mutedApplied", "&cYou have been muted by staff.");

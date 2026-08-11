@@ -56,6 +56,7 @@ public final class EssentialsEvents {
     public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             TabListManager.logout(player);
+            TeleportScheduler.cancel(player);
             Instant joined = SESSIONS.remove(player.getUUID());
             SeenStore.logout(player);
             DiscordWebhook.playerLeft(player, joined == null ? Duration.ZERO : Duration.between(joined, Instant.now()));
@@ -81,6 +82,7 @@ public final class EssentialsEvents {
     public static void tick(PlayerTickEvent.Post event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerState.enforceFreeze(player);
+            TeleportScheduler.tick(player);
         }
     }
     @SubscribeEvent

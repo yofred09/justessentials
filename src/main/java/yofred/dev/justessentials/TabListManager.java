@@ -40,8 +40,8 @@ final class TabListManager {
                 if (JustVanishCompat.canSee(viewer, target)) visible++;
             }
             int vanished = Math.max(0, online - visible);
-            Component header = format(EssentialsConfig.TAB_HEADER.get(), viewer, online, max, visible, vanished);
-            Component footer = format(EssentialsConfig.TAB_FOOTER.get(), viewer, online, max, visible, vanished);
+            Component header = format(profile(viewer, true), viewer, online, max, visible, vanished);
+            Component footer = format(profile(viewer, false), viewer, online, max, visible, vanished);
             viewer.connection.send(new ClientboundTabListPacket(header, footer));
             TabBossBar.update(viewer, format(EssentialsConfig.TAB_BOSSBAR_TEXT.get(), viewer, online, max, visible, vanished));
         }
@@ -49,6 +49,7 @@ final class TabListManager {
 
     private static Component format(String template, ServerPlayer viewer, int online, int max, int visible, int vanished) {
         String world = viewer.level().dimension().location().toString();
+        if (template.length() > 8192) template = template.substring(0, 8192);
         String formatted = template
                 .replace("{player}", viewer.getGameProfile().getName())
                 .replace("{online}", Integer.toString(online))
@@ -85,15 +86,21 @@ final class TabListManager {
     }
 
     static Component formatPlayerName(ServerPlayer player) {
-        String staff = EssentialsPermissions.has(player, EssentialsPermissions.STAFF_MODE) ? EssentialsConfig.TAB_STAFF_PREFIX.get() : "";
+        String staff = groupPrefix(player);
         String vanished = JustVanishCompat.isVanishedForTab(player) ? EssentialsConfig.TAB_VANISH_SUFFIX.get() : "";
         return Messages.colored(EssentialsConfig.TAB_NAME_FORMAT.get()
                 .replace("{player}", player.getGameProfile().getName())
                 .replace("{staff_prefix}", staff)
+                .replace("{group_prefix}", staff)
                 .replace("{vanish_suffix}", vanished));
     }
 
     static void logout(ServerPlayer player) { TabBossBar.logout(player); }
+
+    static void preview(ServerPlayer player) { refreshNow(player.server); player.sendSystemMessage(Messages.message("&aTAB preview refreshed for your current world.")); }
+
+    private static String groupPrefix(ServerPlayer player) { if(player.hasPermissions(4))return EssentialsConfig.TAB_OWNER_PREFIX.get(); if(player.hasPermissions(3))return EssentialsConfig.TAB_ADMIN_PREFIX.get(); if(player.hasPermissions(2))return EssentialsConfig.TAB_MOD_PREFIX.get(); if(player.hasPermissions(1))return EssentialsConfig.TAB_HELPER_PREFIX.get(); return EssentialsConfig.TAB_DEFAULT_PREFIX.get(); }
+    private static String profile(ServerPlayer player,boolean header) { if(!EssentialsConfig.TAB_WORLD_PROFILES.get())return header?EssentialsConfig.TAB_HEADER.get():EssentialsConfig.TAB_FOOTER.get(); String id=player.level().dimension().location().toString(); if(id.equals("minecraft:the_nether"))return header?EssentialsConfig.TAB_NETHER_HEADER.get():EssentialsConfig.TAB_NETHER_FOOTER.get(); if(id.equals("minecraft:the_end"))return header?EssentialsConfig.TAB_END_HEADER.get():EssentialsConfig.TAB_END_FOOTER.get(); return header?EssentialsConfig.TAB_HEADER.get():EssentialsConfig.TAB_FOOTER.get(); }
 
     static void refreshNow(MinecraftServer server) {
         if (refreshing) return;
