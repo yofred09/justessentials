@@ -113,6 +113,12 @@ With `activityMessages.staffAlwaysSeesMessages = true`, players holding `justess
 
 Offline inspection uses a protected snapshot menu: clicks on saved slots and all shift-click transfers are rejected server-side. It never writes to player data.
 
+## Administration and safe travel
+
+Travel commands support safe-destination checks, configurable cooldowns, and movement-cancelled warmups. Administration discovery includes `/je help`, `/homes`, `/warps`, `/seen`, `/whois`, `/warn`, `/warnings`, and `/activitytest`.
+
+TAB profiles may use different Nether and End headers/footers, configurable permission-level group prefixes, and `/tab preview` for immediate inspection.
+
 ## Requirements
 
 - Minecraft 1.21.1

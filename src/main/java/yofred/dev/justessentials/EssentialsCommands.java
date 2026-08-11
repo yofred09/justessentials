@@ -411,7 +411,7 @@ public final class EssentialsCommands {
         ServerPlayer player = source.getPlayerOrException(); var location = TravelStore.home(source.getServer(), player, name);
         if (location == null) { source.sendFailure(Messages.message(EssentialsConfig.MESSAGE_NOT_FOUND.get(), java.util.Map.of("type", "Home", "name", name))); return 0; }
         if (!TravelStore.ready(player)) { source.sendFailure(Component.literal("Teleport cooldown is still active.")); return 0; }
-        TeleportScheduler.schedule(player, () -> { if(TravelStore.teleport(player,location)) player.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_TELEPORTED.get(),java.util.Map.of("destination","home '"+name+"'"))); else player.sendSystemMessage(Messages.message("&cNo safe destination was found.")); }); return 1;
+        TeleportScheduler.schedule(player, () -> { if(TravelStore.teleport(player,location)) player.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_TELEPORTED.get(),java.util.Map.of("destination","home '"+name+"'"))); else player.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_TELEPORT_UNSAFE.get())); }); return 1;
     }
     private static int delHome(CommandSourceStack source, String name) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         if (!TravelStore.deleteHome(source.getServer(), source.getPlayerOrException(), name)) { source.sendFailure(Component.literal("Home '" + name + "' was not found.")); return 0; }
@@ -425,7 +425,7 @@ public final class EssentialsCommands {
         var location = TravelStore.warp(source.getServer(), name); ServerPlayer player = source.getPlayerOrException();
         if (location == null) { source.sendFailure(Messages.message(EssentialsConfig.MESSAGE_NOT_FOUND.get(), java.util.Map.of("type", "Warp", "name", name))); return 0; }
         if (!TravelStore.ready(player)) { source.sendFailure(Component.literal("Teleport cooldown is still active.")); return 0; }
-        TeleportScheduler.schedule(player, () -> { if(TravelStore.teleport(player,location)) player.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_TELEPORTED.get(),java.util.Map.of("destination","warp '"+name+"'"))); else player.sendSystemMessage(Messages.message("&cNo safe destination was found.")); }); return 1;
+        TeleportScheduler.schedule(player, () -> { if(TravelStore.teleport(player,location)) player.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_TELEPORTED.get(),java.util.Map.of("destination","warp '"+name+"'"))); else player.sendSystemMessage(Messages.message(EssentialsConfig.MESSAGE_TELEPORT_UNSAFE.get())); }); return 1;
     }
     private static int delWarp(CommandSourceStack source, String name) { if (!TravelStore.deleteWarp(source.getServer(), name)) { source.sendFailure(Messages.message(EssentialsConfig.MESSAGE_NOT_FOUND.get(), java.util.Map.of("type", "Warp", "name", name))); return 0; } AuditLog.record(source.getServer(), source.getTextName(), "DELETE_WARP", name, "manual"); source.sendSuccess(() -> Messages.message(EssentialsConfig.MESSAGE_DELETED.get(), java.util.Map.of("type", "Warp", "name", name)), true); return 1; }
     private static int tpa(CommandSourceStack source, ServerPlayer target) throws com.mojang.brigadier.exceptions.CommandSyntaxException {

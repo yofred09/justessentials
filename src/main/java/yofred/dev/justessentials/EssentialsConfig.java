@@ -58,6 +58,9 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.BooleanValue SAFE_TELEPORT = B.comment("Search nearby for solid ground and two air blocks before teleporting.").define("travel.safeTeleport", true);
     public static final ModConfigSpec.IntValue TELEPORT_WARMUP = B.comment("Seconds before home, warp and TPA teleports. Moving cancels the teleport.").defineInRange("travel.teleportWarmupSeconds", 3, 0, 300);
     public static final ModConfigSpec.DoubleValue TELEPORT_MOVE_TOLERANCE = B.comment("Maximum movement during warmup before cancellation.").defineInRange("travel.warmupMoveTolerance", 0.15D, 0.0D, 5.0D);
+    public static final ModConfigSpec.ConfigValue<String> MESSAGE_TELEPORT_WARMUP = B.define("messages.teleportWarmup", "&eTeleporting in {seconds} seconds. Do not move.");
+    public static final ModConfigSpec.ConfigValue<String> MESSAGE_TELEPORT_CANCELLED = B.define("messages.teleportCancelled", "&cTeleport cancelled because you moved.");
+    public static final ModConfigSpec.ConfigValue<String> MESSAGE_TELEPORT_UNSAFE = B.define("messages.teleportUnsafe", "&cNo safe destination was found.");
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_PREFIX = B.define("messages.prefix", "&8[&bJust Essentials&8] &r");
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_MUTED = B.define("messages.muted", "&cYou are muted.");
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_MUTED_APPLIED = B.define("messages.mutedApplied", "&cYou have been muted by staff.");

@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.3.0] - 2026-08-11
+
+### Added
+
+- `/je help`, `/homes`, `/warps`, `/seen`, `/whois`, `/warn`, `/warnings`, and `/activitytest`
+- Persistent first/last join, last leave, and playtime records
+- Persistent staff warnings with audit and Discord delivery
+- Safe home and warp destinations with nearby-position search
+- Configurable teleport cooldown, warmup, movement tolerance, and cancellation
+- Configurable warmup, cancellation, and unsafe-destination messages
+- Per-world Nether and End TAB profiles
+- Configurable Owner, Admin, Moderator, Helper, and default TAB prefixes
+- `/tab preview`
+- Public Just Essentials audit API for companion mods
+
+### Integration
+
+- Just Vanish state changes can be written to the Essentials audit log and Discord channels
+
 ## [0.2.0] - 2026-08-11
 
 ### Added
