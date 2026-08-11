@@ -16,6 +16,11 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.BooleanValue HOMES = B.define("modules.homes", true);
     public static final ModConfigSpec.BooleanValue WARPS = B.define("modules.warps", true);
     public static final ModConfigSpec.BooleanValue TPA = B.define("modules.tpa", true);
+    public static final ModConfigSpec.BooleanValue JOIN_LEAVE_MESSAGES = B.comment("Replace vanilla join and leave messages with configurable server-side messages.").define("modules.customJoinLeaveMessages", false);
+    public static final ModConfigSpec.BooleanValue SHOW_JOIN_MESSAGE = B.define("activityMessages.showJoinMessage", true);
+    public static final ModConfigSpec.BooleanValue SHOW_LEAVE_MESSAGE = B.define("activityMessages.showLeaveMessage", true);
+    public static final ModConfigSpec.ConfigValue<String> JOIN_MESSAGE = B.comment("Blank hides the message. Supports &/HEX colors and {player}, {online}, {max}, {world}.").define("activityMessages.joinMessage", "&8[&a+&8] &f{player} &7joined the server.");
+    public static final ModConfigSpec.ConfigValue<String> LEAVE_MESSAGE = B.comment("Blank hides the message. Supports &/HEX colors and {player}, {online}, {max}, {world}.").define("activityMessages.leaveMessage", "&8[&c-&8] &f{player} &7left the server.");
     public static final ModConfigSpec.BooleanValue TAB_LIST = B.comment("Enable the configurable server-side player-list header and footer.").define("modules.customTabList", true);
     public static final ModConfigSpec.ConfigValue<String> TAB_HEADER = B.comment("Supports & color codes, new lines, and {player}, {online}, {max}, {visible}, {vanished} placeholders.").define("tabList.header", "&5&lJUST NETWORK\n&7Welcome, &f{player}&7!");
     public static final ModConfigSpec.ConfigValue<String> TAB_FOOTER = B.comment("Supports & color codes, new lines, and {player}, {online}, {max}, {visible}, {vanished} placeholders.").define("tabList.footer", "&7Online: &a{visible}&8/&a{max}\n&dplay.example.com");

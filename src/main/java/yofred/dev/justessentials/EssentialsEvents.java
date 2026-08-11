@@ -39,6 +39,7 @@ public final class EssentialsEvents {
             PlayerState.enforceFreeze(player);
             SESSIONS.put(player.getUUID(), Instant.now());
             DiscordWebhook.playerJoined(player);
+            ActivityMessages.joined(player);
             if (PlayerState.isStaffMode(player)) StaffTools.activate(player);
             TabListManager.refreshNow(player.server);
         }
@@ -56,6 +57,7 @@ public final class EssentialsEvents {
             TabListManager.logout(player);
             Instant joined = SESSIONS.remove(player.getUUID());
             DiscordWebhook.playerLeft(player, joined == null ? Duration.ZERO : Duration.between(joined, Instant.now()));
+            ActivityMessages.left(player);
         }
     }
     @SubscribeEvent

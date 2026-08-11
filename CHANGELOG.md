@@ -14,6 +14,8 @@
 - Persistent `/tab on|off|toggle|status` controls
 - `/tab bossbar on|off|toggle`, with persistent or session-only preferences
 - Configurable dimensions where the header, footer, and boss bar are disabled
+- Optional custom join and leave messages with colors, HEX, placeholders, and independent visibility switches
+- Join and leave messages can be hidden completely without affecting other system messages
 
 ### Fixed
 
@@ -22,6 +24,7 @@
 - Bossbar commands no longer claim success when the module is disabled server-side
 - Session-only bossbar choices now work when persistent choices are disabled
 - Build scripts no longer use deprecated Gradle repository syntax
+- Custom activity messages respect Just Vanish visibility separately for every viewer
 
 ## [0.1.0] - 2026-08-09
 

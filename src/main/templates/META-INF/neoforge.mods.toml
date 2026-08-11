@@ -14,6 +14,9 @@ description='''
 A modular, server-side administration and utility mod for NeoForge servers.
 '''
 
+[[mixins]]
+config="justessentials.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId="neoforge"
 type="required"

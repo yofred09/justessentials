@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "yofred.dev.justessentials.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ConnectionMixin"
+  ],
+  "minVersion": "0.8"
+}
