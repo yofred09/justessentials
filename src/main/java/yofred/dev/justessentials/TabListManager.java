@@ -2,23 +2,33 @@ package yofred.dev.justessentials;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundTabListPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.EnumSet;
 
 /** Builds a per-viewer tab header/footer so vanish visibility is respected. */
 final class TabListManager {
     private static int ticks;
 
     static void tick(MinecraftServer server) {
-        if (!EssentialsConfig.TAB_LIST.get()) return;
+        if (!EssentialsConfig.TAB_LIST.get()) {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) TabBossBar.remove(player);
+            return;
+        }
         if (++ticks < EssentialsConfig.TAB_REFRESH_TICKS.get()) return;
         ticks = 0;
         int online = server.getPlayerCount();
         int max = server.getMaxPlayers();
+        if (EssentialsConfig.TAB_NAME_FORMATTING.get()) {
+            server.getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(
+                    EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME),
+                    server.getPlayerList().getPlayers()));
+        }
         for (ServerPlayer viewer : server.getPlayerList().getPlayers()) {
             int visible = 0;
             for (ServerPlayer target : server.getPlayerList().getPlayers()) {
