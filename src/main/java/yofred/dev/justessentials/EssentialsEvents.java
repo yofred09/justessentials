@@ -38,6 +38,7 @@ public final class EssentialsEvents {
             PlayerState.applyFlight(player);
             PlayerState.enforceFreeze(player);
             SESSIONS.put(player.getUUID(), Instant.now());
+            SeenStore.login(player);
             DiscordWebhook.playerJoined(player);
             ActivityMessages.joined(player);
             if (PlayerState.isStaffMode(player)) StaffTools.activate(player);
@@ -56,6 +57,7 @@ public final class EssentialsEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             TabListManager.logout(player);
             Instant joined = SESSIONS.remove(player.getUUID());
+            SeenStore.logout(player);
             DiscordWebhook.playerLeft(player, joined == null ? Duration.ZERO : Duration.between(joined, Instant.now()));
             ActivityMessages.left(player);
         }

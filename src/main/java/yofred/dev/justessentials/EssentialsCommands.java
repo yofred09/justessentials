@@ -16,6 +16,16 @@ import java.util.Locale;
 
 public final class EssentialsCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("je")
+                .then(Commands.literal("help").executes(c -> essentialsHelp(c.getSource())))
+                .executes(c -> essentialsHelp(c.getSource())));
+        dispatcher.register(Commands.literal("homes").requires(s -> EssentialsConfig.HOMES.get() && EssentialsPermissions.has(s, EssentialsPermissions.HOME)).executes(c -> listHomes(c.getSource())));
+        dispatcher.register(Commands.literal("warps").requires(s -> EssentialsConfig.WARPS.get() && EssentialsPermissions.has(s, EssentialsPermissions.WARP)).executes(c -> listWarps(c.getSource())));
+        dispatcher.register(Commands.literal("seen").requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.HISTORY)).then(Commands.argument("player", StringArgumentType.word()).executes(c -> seen(c.getSource(), StringArgumentType.getString(c, "player")))));
+        dispatcher.register(Commands.literal("whois").requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.WHOIS)).then(Commands.argument("player", EntityArgument.player()).executes(c -> whois(c.getSource(), EntityArgument.getPlayer(c, "player")))));
+        dispatcher.register(Commands.literal("warn").requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.WARN)).then(Commands.argument("player", EntityArgument.player()).then(Commands.argument("reason", StringArgumentType.greedyString()).executes(c -> warn(c.getSource(), EntityArgument.getPlayer(c, "player"), StringArgumentType.getString(c, "reason"))))));
+        dispatcher.register(Commands.literal("warnings").requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.HISTORY)).then(Commands.argument("player", StringArgumentType.word()).executes(c -> warnings(c.getSource(), StringArgumentType.getString(c, "player")))));
+        dispatcher.register(Commands.literal("activitytest").requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.ACTIVITY_TEST)).executes(c -> activityTest(c.getSource())));
         dispatcher.register(Commands.literal("staffchat").then(Commands.argument("message", StringArgumentType.greedyString())
                 .requires(s -> EssentialsConfig.STAFF_CHAT.get() && EssentialsPermissions.has(s, EssentialsPermissions.STAFF_CHAT))
                 .executes(c -> staffChat(c.getSource(), StringArgumentType.getString(c, "message")))));
@@ -449,6 +459,16 @@ public final class EssentialsCommands {
         for (int level = 4; level >= 0; level--) if (player.hasPermissions(level)) return level;
         return 0;
     }
+    private static int essentialsHelp(CommandSourceStack source) {
+        source.sendSuccess(() -> Messages.message("&bJust Essentials commands: &f/homes, /warps, /seen, /whois, /warn, /warnings, /home, /warp, /tpa, /tab, /staffmode, /invsee, /endersee, /curiossee, /history"), false); return 1;
+    }
+    private static int listHomes(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException { var names=TravelStore.homes(source.getServer(),source.getPlayerOrException()); source.sendSuccess(() -> Messages.message(names.isEmpty()?"&7You have no homes.":"&aHomes: &f"+String.join(", ",names)),false); return names.size(); }
+    private static int listWarps(CommandSourceStack source) { var names=TravelStore.warps(source.getServer()); source.sendSuccess(() -> Messages.message(names.isEmpty()?"&7No warps are configured.":"&aWarps: &f"+String.join(", ",names)),false); return names.size(); }
+    private static int seen(CommandSourceStack source,String name) { var e=SeenStore.find(source.getServer(),name); if(e==null){source.sendFailure(Component.literal("No activity data for "+name+"."));return 0;} source.sendSuccess(() -> Component.literal(e.name()+" | last join: "+Instant.ofEpochMilli(e.lastJoin())+" | last leave: "+(e.lastLeave()==0?"online/unknown":Instant.ofEpochMilli(e.lastLeave()))+" | playtime: "+Duration.ofSeconds(e.playtimeSeconds())),false); return 1; }
+    private static int whois(CommandSourceStack source,ServerPlayer p) { source.sendSuccess(() -> Component.literal(p.getGameProfile().getName()+" | UUID: "+p.getUUID()+" | world: "+p.level().dimension().location()+" | pos: "+p.blockPosition().toShortString()+" | ping: "+p.connection.latency()+"ms | staff: "+PlayerState.isStaffMode(p)+" | vanished: "+JustVanishCompat.isVanishedForTab(p)),false); return 1; }
+    private static int warn(CommandSourceStack source,ServerPlayer target,String reason) { if(!canModerate(source,target))return 0; target.sendSystemMessage(Messages.message("&cWarning: &f"+reason)); AuditLog.record(source.getServer(),source.getTextName(),"WARN",target.getGameProfile().getName(),reason); source.sendSuccess(() -> Messages.message("&aWarning recorded for "+target.getGameProfile().getName()+"."),true); return 1; }
+    private static int warnings(CommandSourceStack source,String name) { var lines=AuditLog.history(source.getServer(),name,50).stream().filter(l->l.contains("\tWARN\t")).toList(); if(lines.isEmpty()){source.sendFailure(Component.literal("No warnings for "+name+"."));return 0;} lines.forEach(l->source.sendSuccess(() -> Component.literal(l),false)); return lines.size(); }
+    private static int activityTest(CommandSourceStack source) { source.sendSuccess(() -> Messages.colored(EssentialsConfig.JOIN_MESSAGE.get().replace("{player}",source.getTextName()).replace("{online}",Integer.toString(source.getServer().getPlayerCount())).replace("{max}",Integer.toString(source.getServer().getMaxPlayers())).replace("{world}","minecraft:overworld")),false); source.sendSuccess(() -> Messages.colored(EssentialsConfig.LEAVE_MESSAGE.get().replace("{player}",source.getTextName()).replace("{online}",Integer.toString(source.getServer().getPlayerCount())).replace("{max}",Integer.toString(source.getServer().getMaxPlayers())).replace("{world}","minecraft:overworld")),false); return 1; }
     private static int tabToggle(CommandSourceStack source, Boolean requested) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         boolean enabled = requested != null ? requested : !PlayerState.isCustomTabEnabled(player);

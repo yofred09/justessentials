@@ -45,9 +45,14 @@ final class TravelStore {
         Map<String, Location> homes = load(server).homes.get(player.getUUID().toString());
         return homes == null ? null : homes.get(name.toLowerCase(java.util.Locale.ROOT));
     }
+    static synchronized java.util.Set<String> homes(MinecraftServer server, ServerPlayer player) {
+        Map<String, Location> homes = load(server).homes.get(player.getUUID().toString());
+        return homes == null ? java.util.Set.of() : new java.util.TreeSet<>(homes.keySet());
+    }
     static synchronized void setWarp(MinecraftServer server, ServerPlayer player, String name) { Data data = load(server); data.warps.put(name.toLowerCase(java.util.Locale.ROOT), here(player)); save(server, data); }
     static synchronized boolean deleteWarp(MinecraftServer server, String name) { Data data = load(server); if (data.warps.remove(name.toLowerCase(java.util.Locale.ROOT)) == null) return false; save(server, data); return true; }
     static synchronized Location warp(MinecraftServer server, String name) { return load(server).warps.get(name.toLowerCase(java.util.Locale.ROOT)); }
+    static synchronized java.util.Set<String> warps(MinecraftServer server) { return new java.util.TreeSet<>(load(server).warps.keySet()); }
     static boolean teleport(ServerPlayer player, Location location) {
         ResourceLocation id = ResourceLocation.tryParse(location.dimension());
         if (id == null) return false;
