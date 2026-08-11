@@ -34,6 +34,10 @@ final class JustVanishCompat {
             return true;
         }
     }
+    static boolean isVanishedForTab(ServerPlayer player) {
+        Boolean vanished = isVanished(player);
+        return vanished != null && vanished;
+    }
     private static Boolean isVanished(ServerPlayer player) {
         try { Method method = Class.forName(API).getMethod("isVanished", net.minecraft.world.entity.player.Player.class); return (Boolean) method.invoke(null, player); }
         catch (ReflectiveOperationException exception) { JustEssentials.LOGGER.error("Just Vanish API is present but could not be queried", exception); return null; }

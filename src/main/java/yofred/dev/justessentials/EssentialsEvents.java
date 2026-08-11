@@ -43,8 +43,16 @@ public final class EssentialsEvents {
         }
     }
     @SubscribeEvent
+    public static void tabName(PlayerEvent.TabListNameFormat event) {
+        if (EssentialsConfig.TAB_LIST.get() && EssentialsConfig.TAB_NAME_FORMATTING.get()
+                && event.getEntity() instanceof ServerPlayer player) {
+            event.setDisplayName(TabListManager.formatPlayerName(player));
+        }
+    }
+    @SubscribeEvent
     public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            TabListManager.logout(player);
             Instant joined = SESSIONS.remove(player.getUUID());
             DiscordWebhook.playerLeft(player, joined == null ? Duration.ZERO : Duration.between(joined, Instant.now()));
         }

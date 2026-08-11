@@ -101,6 +101,8 @@ The server config contains `[messages]`, `[menus]`, and `[staffTools]` sections.
 
 The optional server-side custom TAB list is configured under `[tabList]`. Its header and footer support multiple lines, `&` color/style codes, and `{player}`, `{online}`, `{max}`, `{visible}`, and `{vanished}`. When Just Vanish is installed, visible counts are calculated separately for every viewer and never reveal hidden staff.
 
+TAB text also supports RGB colors such as `&#AA54F4`, animations through `{animation:info}` and `{animation:bar}`, plus `{world}`, `{ping}`, `{time}`, `{date}`, and `{uptime}`. Player-list names and an optional companion boss bar are configurable without requiring a client mod. See [TAB configuration](docs/TAB-CONFIG.md).
+
 Offline inspection uses a protected snapshot menu: clicks on saved slots and all shift-click transfers are rejected server-side. It never writes to player data.
 
 ## Requirements

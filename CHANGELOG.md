@@ -46,3 +46,8 @@
 - Optional dependency metadata for Just Vanish, Curios, and Accessories
 - Configurable server-side TAB header and footer with colors, multiple lines, and live placeholders
 - Per-viewer TAB counts that respect Just Vanish visibility
+- RGB/HEX colors in the `&#RRGGBB` format
+- Configurable TAB animations with independent frames and timing
+- TAB placeholders for world, ping, clock, date, and server uptime
+- Configurable player-list name formatting with staff and vanish markers
+- Optional configurable TAB companion boss bar
