@@ -103,6 +103,8 @@ The optional server-side custom TAB list is configured under `[tabList]`. Its he
 
 TAB text also supports RGB colors such as `&#AA54F4`, animations through `{animation:info}` and `{animation:bar}`, plus `{world}`, `{ping}`, `{time}`, `{date}`, and `{uptime}`. Player-list names and an optional companion boss bar are configurable without requiring a client mod. See [TAB configuration](docs/TAB-CONFIG.md).
 
+Players can control the presentation with `/tab on|off|toggle|status` and `/tab bossbar on|off|toggle`. Templates additionally support `{health}`, `{food}`, `{x}`, `{y}`, `{z}`, `{tps}`, and `{mspt}`, and administrators can disable the presentation in selected dimensions.
+
 Offline inspection uses a protected snapshot menu: clicks on saved slots and all shift-click transfers are rejected server-side. It never writes to player data.
 
 ## Requirements

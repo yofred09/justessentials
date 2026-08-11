@@ -14,6 +14,7 @@ import java.util.EnumSet;
 /** Builds a per-viewer tab header/footer so vanish visibility is respected. */
 final class TabListManager {
     private static int ticks;
+    private static boolean refreshing;
 
     static void tick(MinecraftServer server) {
         if (!EssentialsConfig.TAB_LIST.get()) {
@@ -30,6 +31,10 @@ final class TabListManager {
                     server.getPlayerList().getPlayers()));
         }
         for (ServerPlayer viewer : server.getPlayerList().getPlayers()) {
+            if (!enabledFor(viewer)) {
+                clear(viewer);
+                continue;
+            }
             int visible = 0;
             for (ServerPlayer target : server.getPlayerList().getPlayers()) {
                 if (JustVanishCompat.canSee(viewer, target)) visible++;
@@ -52,6 +57,13 @@ final class TabListManager {
                 .replace("{vanished}", Integer.toString(vanished))
                 .replace("{world}", world)
                 .replace("{ping}", Integer.toString(viewer.connection.latency()))
+                .replace("{health}", String.format("%.1f", viewer.getHealth()))
+                .replace("{food}", Integer.toString(viewer.getFoodData().getFoodLevel()))
+                .replace("{x}", Integer.toString(viewer.blockPosition().getX()))
+                .replace("{y}", Integer.toString(viewer.blockPosition().getY()))
+                .replace("{z}", Integer.toString(viewer.blockPosition().getZ()))
+                .replace("{tps}", String.format("%.1f", Math.min(20.0D, 1000.0D / Math.max(1.0D, viewer.server.getAverageTickTimeNanos() / 1_000_000.0D))))
+                .replace("{mspt}", String.format("%.1f", viewer.server.getAverageTickTimeNanos() / 1_000_000.0D))
                 .replace("{time}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")))
                 .replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .replace("{uptime}", uptime())
@@ -81,7 +93,25 @@ final class TabListManager {
                 .replace("{vanish_suffix}", vanished));
     }
 
-    static void logout(ServerPlayer player) { TabBossBar.remove(player); }
+    static void logout(ServerPlayer player) { TabBossBar.logout(player); }
+
+    static void refreshNow(MinecraftServer server) {
+        if (refreshing) return;
+        refreshing = true;
+        try { ticks = EssentialsConfig.TAB_REFRESH_TICKS.get(); tick(server); }
+        finally { refreshing = false; }
+    }
+
+    static void clear(ServerPlayer player) {
+        player.connection.send(new ClientboundTabListPacket(Component.empty(), Component.empty()));
+        TabBossBar.remove(player);
+    }
+
+    private static boolean enabledFor(ServerPlayer player) {
+        if (EssentialsConfig.TAB_ALLOW_PLAYER_TOGGLE.get() && !PlayerState.isCustomTabEnabled(player)) return false;
+        String dimension = player.level().dimension().location().toString();
+        return EssentialsConfig.TAB_DISABLED_WORLDS.get().stream().noneMatch(dimension::equalsIgnoreCase);
+    }
 
     private TabListManager() {}
 }

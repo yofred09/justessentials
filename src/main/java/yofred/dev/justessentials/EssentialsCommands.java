@@ -93,7 +93,19 @@ public final class EssentialsCommands {
                 .executes(c -> discordTest(c.getSource())));
         dispatcher.register(Commands.literal("jereload")
                 .requires(s -> EssentialsPermissions.has(s, EssentialsPermissions.DISCORD_TEST))
-                .executes(c -> { c.getSource().sendSuccess(() -> Messages.message("&aConfiguration values are active. File changes are watched by NeoForge."), false); return 1; }));
+                .executes(c -> { TabListManager.refreshNow(c.getSource().getServer()); c.getSource().sendSuccess(() -> Messages.message("&aConfiguration values are active and visual modules were refreshed."), false); return 1; }));
+        dispatcher.register(Commands.literal("tab")
+                .requires(s -> EssentialsConfig.TAB_LIST.get() && EssentialsConfig.TAB_ALLOW_PLAYER_TOGGLE.get())
+                .executes(c -> tabToggle(c.getSource(), null))
+                .then(Commands.literal("toggle").executes(c -> tabToggle(c.getSource(), null)))
+                .then(Commands.literal("on").executes(c -> tabToggle(c.getSource(), true)))
+                .then(Commands.literal("off").executes(c -> tabToggle(c.getSource(), false)))
+                .then(Commands.literal("status").executes(c -> tabStatus(c.getSource())))
+                .then(Commands.literal("bossbar")
+                        .executes(c -> bossBarToggle(c.getSource(), null))
+                        .then(Commands.literal("toggle").executes(c -> bossBarToggle(c.getSource(), null)))
+                        .then(Commands.literal("on").executes(c -> bossBarToggle(c.getSource(), true)))
+                        .then(Commands.literal("off").executes(c -> bossBarToggle(c.getSource(), false)))));
         registerTemporaryPunishment(dispatcher, "tempmute", PunishmentStore.Kind.MUTE);
         registerTemporaryPunishment(dispatcher, "tempfreeze", PunishmentStore.Kind.FREEZE);
         dispatcher.register(Commands.literal("tempban")
@@ -436,6 +448,31 @@ public final class EssentialsCommands {
     private static int permissionLevel(ServerPlayer player) {
         for (int level = 4; level >= 0; level--) if (player.hasPermissions(level)) return level;
         return 0;
+    }
+    private static int tabToggle(CommandSourceStack source, Boolean requested) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        boolean enabled = requested != null ? requested : !PlayerState.isCustomTabEnabled(player);
+        PlayerState.setCustomTabEnabled(player, enabled);
+        if (!enabled) TabListManager.clear(player); else TabListManager.refreshNow(source.getServer());
+        source.sendSuccess(() -> Messages.message(enabled ? "&aCustom TAB enabled." : "&cCustom TAB disabled."), false);
+        return 1;
+    }
+    private static int tabStatus(CommandSourceStack source) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        boolean enabled = PlayerState.isCustomTabEnabled(source.getPlayerOrException());
+        source.sendSuccess(() -> Messages.message(enabled ? "&aCustom TAB is enabled." : "&cCustom TAB is disabled."), false);
+        return enabled ? 1 : 0;
+    }
+    private static int bossBarToggle(CommandSourceStack source, Boolean requested) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        if (!EssentialsConfig.TAB_BOSSBAR.get()) {
+            source.sendFailure(Messages.message("&cThe TAB boss bar is disabled by the server configuration."));
+            return 0;
+        }
+        boolean enabled = requested != null ? requested : !TabBossBar.enabledFor(player);
+        TabBossBar.setEnabled(player, enabled);
+        if (!enabled) TabBossBar.remove(player); else TabListManager.refreshNow(source.getServer());
+        source.sendSuccess(() -> Messages.message(enabled ? "&aTAB boss bar enabled." : "&cTAB boss bar disabled."), false);
+        return 1;
     }
     private EssentialsCommands() {}
 }

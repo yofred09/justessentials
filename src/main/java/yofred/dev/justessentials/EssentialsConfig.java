@@ -20,6 +20,7 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.ConfigValue<String> TAB_HEADER = B.comment("Supports & color codes, new lines, and {player}, {online}, {max}, {visible}, {vanished} placeholders.").define("tabList.header", "&5&lJUST NETWORK\n&7Welcome, &f{player}&7!");
     public static final ModConfigSpec.ConfigValue<String> TAB_FOOTER = B.comment("Supports & color codes, new lines, and {player}, {online}, {max}, {visible}, {vanished} placeholders.").define("tabList.footer", "&7Online: &a{visible}&8/&a{max}\n&dplay.example.com");
     public static final ModConfigSpec.IntValue TAB_REFRESH_TICKS = B.comment("How often the tab list is refreshed. 20 ticks equals one second.").defineInRange("tabList.refreshTicks", 20, 5, 1200);
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> TAB_DISABLED_WORLDS = B.comment("Dimension IDs where the custom TAB is disabled, for example minecraft:the_end.").defineListAllowEmpty("tabList.disabledWorlds", java.util.List.of(), () -> "", value -> value instanceof String);
     public static final ModConfigSpec.BooleanValue TAB_ANIMATIONS = B.define("tabList.animations.enabled", true);
     public static final ModConfigSpec.IntValue TAB_ANIMATION_INTERVAL = B.defineInRange("tabList.animations.intervalMilliseconds", 1000, 50, 600000);
     public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> TAB_ANIMATION_INFO = B.comment("Use {animation:info} in the header or footer.").defineListAllowEmpty("tabList.animations.info", java.util.List.of("&dDiscord: &fdiscord.example.com", "&dStore: &fstore.example.com", "&dWebsite: &fwww.example.com"), () -> "", value -> value instanceof String);
@@ -33,6 +34,8 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.ConfigValue<String> TAB_BOSSBAR_COLOR = B.comment("PINK, BLUE, RED, GREEN, YELLOW, PURPLE, or WHITE.").define("tabList.bossBar.color", "PURPLE");
     public static final ModConfigSpec.ConfigValue<String> TAB_BOSSBAR_STYLE = B.comment("PROGRESS, NOTCHED_6, NOTCHED_10, NOTCHED_12, or NOTCHED_20.").define("tabList.bossBar.style", "PROGRESS");
     public static final ModConfigSpec.DoubleValue TAB_BOSSBAR_PROGRESS = B.defineInRange("tabList.bossBar.progress", 1.0D, 0.0D, 1.0D);
+    public static final ModConfigSpec.BooleanValue TAB_ALLOW_PLAYER_TOGGLE = B.define("tabList.allowPlayerToggle", true);
+    public static final ModConfigSpec.BooleanValue TAB_BOSSBAR_REMEMBER_TOGGLE = B.define("tabList.bossBar.rememberPlayerToggle", true);
     public static final ModConfigSpec.IntValue MAX_HOMES = B.defineInRange("travel.maxHomesPerPlayer", 5, 1, 100);
     public static final ModConfigSpec.IntValue TPA_TIMEOUT = B.defineInRange("travel.tpaTimeoutSeconds", 60, 10, 600);
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_PREFIX = B.define("messages.prefix", "&8[&bJust Essentials&8] &r");

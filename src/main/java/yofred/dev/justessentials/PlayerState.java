@@ -21,6 +21,8 @@ public final class PlayerState {
     private static final String STAFF_CHAT = "StaffChatMode";
     private static final String PREVIOUS_GOD = "PreviousGodMode";
     private static final String PREVIOUS_FLY = "PreviousFlight";
+    private static final String TAB_HIDDEN = "CustomTabHidden";
+    private static final String TAB_BOSSBAR_HIDDEN = "TabBossBarHidden";
     private static final Map<UUID, Location> BACK = new ConcurrentHashMap<>();
     private static final Map<UUID, Location> FREEZE_LOCATIONS = new ConcurrentHashMap<>();
 
@@ -51,6 +53,10 @@ public final class PlayerState {
     public static boolean isStaffMode(ServerPlayer player) { return data(player).getBoolean(STAFF_MODE); }
     public static boolean isStaffChat(ServerPlayer player) { return data(player).getBoolean(STAFF_CHAT); }
     public static void setStaffChat(ServerPlayer player, boolean enabled) { setFlag(player, STAFF_CHAT, enabled); }
+    public static boolean isCustomTabEnabled(ServerPlayer player) { return !data(player).getBoolean(TAB_HIDDEN); }
+    public static void setCustomTabEnabled(ServerPlayer player, boolean enabled) { setFlag(player, TAB_HIDDEN, !enabled); }
+    public static boolean isTabBossBarEnabled(ServerPlayer player) { return !data(player).getBoolean(TAB_BOSSBAR_HIDDEN); }
+    public static void setTabBossBarEnabled(ServerPlayer player, boolean enabled) { setFlag(player, TAB_BOSSBAR_HIDDEN, !enabled); }
     public static boolean toggleStaffMode(ServerPlayer player) {
         boolean enabled = !isStaffMode(player);
         if (enabled) {
@@ -67,6 +73,7 @@ public final class PlayerState {
         setFlag(player, STAFF_MODE, enabled);
         return enabled;
     }
+    @SuppressWarnings("deprecation") // NeoForge 1.21.1 has no replacement accessor for Abilities.mayfly.
     public static void applyFlight(ServerPlayer player) {
         boolean enabled = isFlight(player);
         player.getAbilities().mayfly = enabled || player.isCreative() || player.isSpectator();

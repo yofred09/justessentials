@@ -1,6 +1,29 @@
 # Changelog
 
-## [0.1.0] - Unreleased
+## [0.2.0] - 2026-08-11
+
+### Added
+
+- Configurable server-side TAB header and footer with multiple lines
+- RGB/HEX colors using the `&#RRGGBB` format
+- Configurable `{animation:info}` and `{animation:bar}` animations
+- Visibility-aware player counts integrated with Just Vanish
+- Placeholders for world, ping, health, food, coordinates, TPS, MSPT, clock, date, and uptime
+- Configurable player-list names with staff prefixes and vanish markers
+- Optional configurable companion boss bar
+- Persistent `/tab on|off|toggle|status` controls
+- `/tab bossbar on|off|toggle`, with persistent or session-only preferences
+- Configurable dimensions where the header, footer, and boss bar are disabled
+
+### Fixed
+
+- Visual modules now refresh immediately after login, dimension changes, and `/jereload`
+- Disabled TAB presentations now clear their header, footer, and boss bar correctly
+- Bossbar commands no longer claim success when the module is disabled server-side
+- Session-only bossbar choices now work when persistent choices are disabled
+- Build scripts no longer use deprecated Gradle repository syntax
+
+## [0.1.0] - 2026-08-09
 
 ### Added
 
@@ -44,10 +67,3 @@
 - Atomic JSON writes with corrupt-file preservation
 - JUnit coverage for durations, placeholders, and atomic persistence
 - Optional dependency metadata for Just Vanish, Curios, and Accessories
-- Configurable server-side TAB header and footer with colors, multiple lines, and live placeholders
-- Per-viewer TAB counts that respect Just Vanish visibility
-- RGB/HEX colors in the `&#RRGGBB` format
-- Configurable TAB animations with independent frames and timing
-- TAB placeholders for world, ping, clock, date, and server uptime
-- Configurable player-list name formatting with staff and vanish markers
-- Optional configurable TAB companion boss bar

@@ -10,9 +10,10 @@ import net.minecraft.world.BossEvent;
 
 final class TabBossBar {
     private static final Map<UUID, ServerBossEvent> BARS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Boolean> SESSION_CHOICES = new ConcurrentHashMap<>();
 
     static void update(ServerPlayer player, Component text) {
-        if (!EssentialsConfig.TAB_BOSSBAR.get()) {
+        if (!EssentialsConfig.TAB_BOSSBAR.get() || !enabledFor(player)) {
             remove(player);
             return;
         }
@@ -31,6 +32,22 @@ final class TabBossBar {
     static void remove(ServerPlayer player) {
         ServerBossEvent bar = BARS.remove(player.getUUID());
         if (bar != null) bar.removeAllPlayers();
+    }
+
+    static boolean enabledFor(ServerPlayer player) {
+        return EssentialsConfig.TAB_BOSSBAR_REMEMBER_TOGGLE.get()
+                ? PlayerState.isTabBossBarEnabled(player)
+                : SESSION_CHOICES.getOrDefault(player.getUUID(), true);
+    }
+
+    static void setEnabled(ServerPlayer player, boolean enabled) {
+        if (EssentialsConfig.TAB_BOSSBAR_REMEMBER_TOGGLE.get()) PlayerState.setTabBossBarEnabled(player, enabled);
+        else SESSION_CHOICES.put(player.getUUID(), enabled);
+    }
+
+    static void logout(ServerPlayer player) {
+        remove(player);
+        SESSION_CHOICES.remove(player.getUUID());
     }
 
     private static BossEvent.BossBarColor color() {

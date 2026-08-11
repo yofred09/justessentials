@@ -40,6 +40,7 @@ public final class EssentialsEvents {
             SESSIONS.put(player.getUUID(), Instant.now());
             DiscordWebhook.playerJoined(player);
             if (PlayerState.isStaffMode(player)) StaffTools.activate(player);
+            TabListManager.refreshNow(player.server);
         }
     }
     @SubscribeEvent
@@ -56,6 +57,10 @@ public final class EssentialsEvents {
             Instant joined = SESSIONS.remove(player.getUUID());
             DiscordWebhook.playerLeft(player, joined == null ? Duration.ZERO : Duration.between(joined, Instant.now()));
         }
+    }
+    @SubscribeEvent
+    public static void changedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) TabListManager.refreshNow(player.server);
     }
     @SubscribeEvent
     public static void chat(ServerChatEvent event) {

@@ -1,8 +1,8 @@
 # Custom TAB configuration
 
-Just Essentials provides a server-side TAB header, footer, player-name formatter, animations, and an optional boss bar. Vanilla clients are supported.
+Just Essentials provides a server-side TAB header, footer, player-name formatter, animations, and optional boss bar. Vanilla clients are supported.
 
-The settings are generated in `world/serverconfig/justessentials-server.toml`:
+Settings are generated in `world/serverconfig/justessentials-server.toml`:
 
 ```toml
 [modules]
@@ -10,6 +10,8 @@ customTabList = true
 
 [tabList]
 refreshTicks = 10
+disabledWorlds = ["minecraft:the_end"]
+allowPlayerToggle = true
 header = "&#AA54F4&lJUST NETWORK\n&7Welcome, &f{player}&7!\n&7World: &d{world}"
 footer = "{animation:info}\n{animation:bar}\n&7Online: &a{visible}&8/&a{max} &8| &7Ping: &a{ping}ms"
 
@@ -23,7 +25,7 @@ vanishSuffix = " &7[Vanished]"
 enabled = true
 intervalMilliseconds = 1000
 info = ["&dDiscord: &fdiscord.example.com", "&dStore: &fstore.example.com"]
-bar = ["&d━&8━━━━━━━━━━━━", "&8━&d━&8━━━━━━━━━━━", "&8━━&d━&8━━━━━━━━━━"]
+bar = ["&d=&8============", "&8=&d=&8===========", "&8==&d=&8=========="]
 
 [tabList.bossBar]
 enabled = false
@@ -31,6 +33,7 @@ text = "&#AA54F4&lJUST NETWORK &8| &f{visible}/{max} online"
 color = "PURPLE"
 style = "PROGRESS"
 progress = 1.0
+rememberPlayerToggle = true
 ```
 
 ## Placeholders
@@ -42,8 +45,15 @@ progress = 1.0
 - `{max}` - configured server capacity
 - `{world}` - current dimension identifier
 - `{ping}` - viewing player's latency
+- `{health}` and `{food}` - viewing player's health and food level
+- `{x}`, `{y}`, and `{z}` - viewing player's block coordinates
+- `{tps}` and `{mspt}` - current server tick performance
 - `{time}` and `{date}` - server-local time and date
 - `{uptime}` - JVM uptime
-- `{animation:info}` and `{animation:bar}` - current configured animation frames
+- `{animation:info}` and `{animation:bar}` - current animation frames
 
-Classic `&` codes and RGB colors in the `&#RRGGBB` format can be mixed. Just Essentials intentionally does not alter vanilla scoreboard teams for sorting, because those teams may control Just Vanish trusted visibility and other mod behavior.
+Classic `&` codes and RGB colors in the `&#RRGGBB` format can be mixed.
+
+Players can use `/tab on|off|toggle|status` and `/tab bossbar on|off|toggle`. Preferences persist when configured. World exclusions and `/tab off` clear the custom header, footer, and boss bar. Player-name formatting remains global because vanilla distributes it as a property of the listed player.
+
+Just Essentials intentionally does not alter vanilla scoreboard teams for sorting, because those teams may control Just Vanish trusted visibility and other mod behavior.
