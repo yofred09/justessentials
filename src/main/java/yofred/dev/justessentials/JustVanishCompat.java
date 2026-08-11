@@ -23,6 +23,17 @@ final class JustVanishCompat {
     }
 
     static boolean available() { return ModList.get().isLoaded("justvanish"); }
+    static boolean canSee(ServerPlayer viewer, ServerPlayer target) {
+        if (!available()) return true;
+        try {
+            return (Boolean) Class.forName(API)
+                    .getMethod("canSee", ServerPlayer.class, net.minecraft.world.entity.player.Player.class)
+                    .invoke(null, viewer, target);
+        } catch (ReflectiveOperationException exception) {
+            JustEssentials.LOGGER.error("Just Vanish API is present but tab visibility could not be queried", exception);
+            return true;
+        }
+    }
     private static Boolean isVanished(ServerPlayer player) {
         try { Method method = Class.forName(API).getMethod("isVanished", net.minecraft.world.entity.player.Player.class); return (Boolean) method.invoke(null, player); }
         catch (ReflectiveOperationException exception) { JustEssentials.LOGGER.error("Just Vanish API is present but could not be queried", exception); return null; }

@@ -16,6 +16,10 @@ public final class EssentialsConfig {
     public static final ModConfigSpec.BooleanValue HOMES = B.define("modules.homes", true);
     public static final ModConfigSpec.BooleanValue WARPS = B.define("modules.warps", true);
     public static final ModConfigSpec.BooleanValue TPA = B.define("modules.tpa", true);
+    public static final ModConfigSpec.BooleanValue TAB_LIST = B.comment("Enable the configurable server-side player-list header and footer.").define("modules.customTabList", true);
+    public static final ModConfigSpec.ConfigValue<String> TAB_HEADER = B.comment("Supports & color codes, new lines, and {player}, {online}, {max}, {visible}, {vanished} placeholders.").define("tabList.header", "&5&lJUST NETWORK\n&7Welcome, &f{player}&7!");
+    public static final ModConfigSpec.ConfigValue<String> TAB_FOOTER = B.comment("Supports & color codes, new lines, and {player}, {online}, {max}, {visible}, {vanished} placeholders.").define("tabList.footer", "&7Online: &a{visible}&8/&a{max}\n&dplay.example.com");
+    public static final ModConfigSpec.IntValue TAB_REFRESH_TICKS = B.comment("How often the tab list is refreshed. 20 ticks equals one second.").defineInRange("tabList.refreshTicks", 20, 5, 1200);
     public static final ModConfigSpec.IntValue MAX_HOMES = B.defineInRange("travel.maxHomesPerPlayer", 5, 1, 100);
     public static final ModConfigSpec.IntValue TPA_TIMEOUT = B.defineInRange("travel.tpaTimeoutSeconds", 60, 10, 600);
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_PREFIX = B.define("messages.prefix", "&8[&bJust Essentials&8] &r");

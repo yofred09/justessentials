@@ -44,3 +44,5 @@
 - Atomic JSON writes with corrupt-file preservation
 - JUnit coverage for durations, placeholders, and atomic persistence
 - Optional dependency metadata for Just Vanish, Curios, and Accessories
+- Configurable server-side TAB header and footer with colors, multiple lines, and live placeholders
+- Per-viewer TAB counts that respect Just Vanish visibility

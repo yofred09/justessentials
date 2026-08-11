@@ -67,7 +67,10 @@ public final class EssentialsEvents {
         }
     }
     @SubscribeEvent
-    public static void serverTick(ServerTickEvent.Post event) { PunishmentStore.tick(event.getServer()); }
+    public static void serverTick(ServerTickEvent.Post event) {
+        PunishmentStore.tick(event.getServer());
+        TabListManager.tick(event.getServer());
+    }
     @SubscribeEvent
     public static void leftClickBlock(PlayerInteractEvent.LeftClickBlock event) { cancelIfFrozen(event.getEntity(), event); }
     @SubscribeEvent

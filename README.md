@@ -99,6 +99,8 @@ When Just Vanish 1.2.0+ is installed, staff mode uses its public API automatical
 
 The server config contains `[messages]`, `[menus]`, and `[staffTools]` sections. Text supports classic `&` color/style codes and placeholders such as `{player}`, `{reason}`, `{type}`, and `{expires}`. You can customize the global prefix, moderation notices, TPA messages, staff-mode messages, menu titles, tool names, or disable the staff hotbar entirely. NeoForge watches the config file; `/jereload` confirms that the current values are active.
 
+The optional server-side custom TAB list is configured under `[tabList]`. Its header and footer support multiple lines, `&` color/style codes, and `{player}`, `{online}`, `{max}`, `{visible}`, and `{vanished}`. When Just Vanish is installed, visible counts are calculated separately for every viewer and never reveal hidden staff.
+
 Offline inspection uses a protected snapshot menu: clicks on saved slots and all shift-click transfers are rejected server-side. It never writes to player data.
 
 ## Requirements
