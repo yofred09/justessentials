@@ -16,6 +16,6 @@ public final class JustEssentials {
 
     public JustEssentials(IEventBus modBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.SERVER, EssentialsConfig.SPEC);
-        JustCoreApi.registerModule(new JustModule(MODID, "Just Essentials", "0.3.1"));
+        JustCoreApi.registerModule(new JustModule(MODID, "Just Essentials", container.getModInfo().getVersion().toString()));
     }
 }
