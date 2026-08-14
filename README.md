@@ -6,6 +6,10 @@ Install both the Just Core and Just Essentials JAR files in the server's `mods` 
 
 Complete installation, commands, permissions, configuration, integrations, and troubleshooting are maintained in the [Just Essentials Wiki](https://github.com/yofred09/justessentials/wiki).
 
+## Community & Support
+
+Join the [official Discord community](https://discord.gg/R5VnN7Rn5H) for help, discussion and development updates.
+
 ## Implemented in 0.1.0
 
 - `/staffchat <message>` and `/sc <message>`

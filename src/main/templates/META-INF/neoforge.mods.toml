@@ -12,6 +12,7 @@ authors="Yo_Fred"
 displayURL="https://github.com/yofred09/justessentials"
 description='''
 A modular, server-side administration and utility mod for NeoForge servers.
+Community and support: https://discord.gg/R5VnN7Rn5H
 '''
 
 [[mixins]]
